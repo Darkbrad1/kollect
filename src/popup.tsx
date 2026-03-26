@@ -11,27 +11,36 @@ if (!publishableKey) {
   throw new Error("Missing PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY")
 }
 
-function openAuthPage(mode: "sign-in" | "sign-up") {
-  const url = chrome.runtime.getURL(`tabs/auth.html`)
-  chrome.tabs.create({ url })
+function openSignInPage() {
+  chrome.tabs.create({
+    url: chrome.runtime.getURL("tabs/auth.html?mode=sign-in")
+  })
+}
+
+function openSignUpPage() {
+  chrome.tabs.create({
+    url: chrome.runtime.getURL("tabs/auth.html?mode=sign-up")
+  })
 }
 
 export default function Popup() {
   return (
-    <ClerkProvider publishableKey={publishableKey}>
+    <ClerkProvider publishableKey={publishableKey} afterSignOutUrl="/popup.html">
       <ConvexProviderWithAuth client={convex} useAuth={useConvexClerkAuth}>
         <div className="min-w-[600px] min-h-[600px] p-4">
           <Show when="signed-out">
             <div className="flex flex-col gap-3">
               <h1 className="text-lg font-bold">Manga Tracker</h1>
+
               <button
                 className="rounded bg-black px-4 py-2 text-white"
-                onClick={() => openAuthPage("sign-in")}>
+                onClick={openSignInPage}>
                 Sign in
               </button>
+
               <button
                 className="rounded border px-4 py-2"
-                onClick={() => openAuthPage("sign-up")}>
+                onClick={openSignUpPage}>
                 Sign up
               </button>
             </div>
