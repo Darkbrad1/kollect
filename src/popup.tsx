@@ -1,9 +1,11 @@
 import { ClerkProvider, Show, UserButton } from "@clerk/chrome-extension"
 import { ConvexProviderWithAuth } from "convex/react"
 
+import { Button } from "~components/ui/button"
+import { Input } from "~components/ui/input"
 import { convex } from "~lib/convex"
-import "~style.css"
 import { useConvexClerkAuth } from "~lib/useConvexClerkAuth"
+import "~style.css"
 
 const publishableKey = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY
 
@@ -27,22 +29,16 @@ export default function Popup() {
   return (
     <ClerkProvider publishableKey={publishableKey} afterSignOutUrl="/popup.html">
       <ConvexProviderWithAuth client={convex} useAuth={useConvexClerkAuth}>
-        <div className="min-w-[600px] min-h-[600px] p-4">
+        <div className="min-h-[600px] min-w-[600px] p-4">
           <Show when="signed-out">
             <div className="flex flex-col gap-3">
               <h1 className="text-lg font-bold">Manga Tracker</h1>
 
-              <button
-                className="rounded bg-black px-4 py-2 text-white"
-                onClick={openSignInPage}>
-                Sign in
-              </button>
-
-              <button
-                className="rounded border px-4 py-2"
-                onClick={openSignUpPage}>
+              <Button onClick={openSignInPage}>Sign in</Button>
+              <Button variant="outline" onClick={openSignUpPage}>
                 Sign up
-              </button>
+              </Button>
+              <Input />
             </div>
           </Show>
 
