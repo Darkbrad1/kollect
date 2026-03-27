@@ -4,7 +4,7 @@ import { v } from "convex/values"
 const statusValidator = v.union(
   v.literal("reading"),
   v.literal("planned"),
-  v.literal("haitus"),
+  v.literal("hiatus"),
   v.literal("archived")
 )
 

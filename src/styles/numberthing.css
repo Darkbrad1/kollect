@@ -1,0 +1,27 @@
+.numberthing {
+    --offset: 0.7rem;
+    position: relative;
+    &::after {
+        content: "";
+        background-color: rgb(0, 0, 0);
+        position: absolute;
+        top: calc(-1 * var(--offset));
+        right: 0px;
+        aspect-ratio: 1;
+        width: var(--offset);
+        border-radius: 100px 0px 0px 0px;
+        corner-shape: scoop;
+    }
+    &::before {
+        content: "";
+        background-color: rgb(0, 0, 0);
+        position: absolute;
+        left: calc(-1 * var(--offset));
+        bottom: -1px;
+        aspect-ratio: 1;
+        width: var(--offset);
+        border-radius: 100px 0px 0px 0px;
+        corner-shape: scoop;
+    }
+}
+
