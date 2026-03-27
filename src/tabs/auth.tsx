@@ -1,40 +1,34 @@
-import { ClerkProvider, Show, SignIn, SignUp } from "@clerk/chrome-extension"
+import "~style.css"
 
-const publishableKey = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY
+import { ClerkProvider, SignIn, SignUp } from "@clerk/chrome-extension"
 
-if (!publishableKey) {
+const PUBLISHABLE_KEY = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY
+const EXTENSION_URL = chrome.runtime.getURL(".")
+console.log(EXTENSION_URL)
+
+
+if (!PUBLISHABLE_KEY) {
   throw new Error("Missing PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY")
 }
 
-function getMode() {
-  const params = new URLSearchParams(window.location.search)
-  const mode = params.get("mode")
-
-  if (mode === "sign-up") {
-    return "sign-up"
-  }
-
-  return "sign-in"
-}
-
 export default function AuthPage() {
-  const mode = getMode()
-  const popupUrl = chrome.runtime.getURL("popup.html")
+  const mode =
+    new URLSearchParams(window.location.search).get("mode") === "sign-up"
+      ? "sign-up"
+      : "sign-in"
 
   return (
     <ClerkProvider
-      publishableKey={publishableKey}
-      afterSignOutUrl={popupUrl}
-      signInFallbackRedirectUrl={popupUrl}
-      signUpFallbackRedirectUrl={popupUrl}>
-      <div className="mx-auto flex min-h-screen max-w-xl flex-col justify-center p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold">Kollect Auth</h1>
-          <p className="text-sm text-gray-600">
-            Sign in or create your account
-          </p>
-        </div>
-        <SignIn />
+      publishableKey={PUBLISHABLE_KEY}
+      afterSignOutUrl={`${EXTENSION_URL}tabs/auth.html`}
+      signInFallbackRedirectUrl={`${EXTENSION_URL}tabs/auth.html`}
+      signUpFallbackRedirectUrl={`${EXTENSION_URL}tabs/auth.html`}>
+      <div className="grid place-content-center min-h-screen">
+        {mode === "sign-in" ? (
+          <SignIn routing="hash" />
+        ) : (
+          <SignUp routing="hash" />
+        )}
       </div>
     </ClerkProvider>
   )
