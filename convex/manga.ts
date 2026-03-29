@@ -96,13 +96,10 @@ export const deleteManga = mutation({
   },
   handler: async (ctx, { id }) => {
     const userId = await requireUser(ctx)
-
     const manga = await ctx.db.get(id)
-
     if (!manga || manga.user_id !== userId) {
       throw new Error("Manga not found or unauthorized")
     }
-
     await ctx.db.delete(id)
     return id
   }
@@ -112,7 +109,6 @@ export const listManga = query({
   args: {},
   handler: async (ctx) => {
     const userId = await requireUser(ctx)
-
     return await ctx.db
       .query("Manga")
       .withIndex("by_user_id", (q) => q.eq("user_id", userId))
@@ -126,7 +122,6 @@ export const listMangaByStatus = query({
   },
   handler: async (ctx, { status }) => {
     const userId = await requireUser(ctx)
-
     return await ctx.db
       .query("Manga")
       .withIndex("by_user_id", (q) => q.eq("user_id", userId))

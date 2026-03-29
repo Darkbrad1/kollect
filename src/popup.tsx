@@ -1,6 +1,10 @@
-import { ClerkProvider, Show, UserButton } from "@clerk/chrome-extension"
+import { useEffect } from "react"
+
+import { ClerkProvider, Show, UserButton, useAuth } from "@clerk/chrome-extension"
 import { ConvexProviderWithAuth } from "convex/react"
 
+import AddMangaButton from "~components/AddMangaButton"
+import { AppStateProvider } from "~components/AppStateProvider"
 import RenderMangas from "~components/RenderMangas"
 import { Button } from "~components/ui/button"
 import { Input } from "~components/ui/input"
@@ -8,9 +12,6 @@ import { convex } from "~lib/convex"
 import { useConvexClerkAuth } from "~lib/useConvexClerkAuth"
 
 import "~style.css"
-
-import { AppStateProvider } from "~components/AppStateProvider"
-import AddMangaButton from "~components/AddMangaButton"
 
 const publishableKey = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY
 
@@ -30,11 +31,37 @@ function openSignUpPage() {
   })
 }
 
+function ClerkTokenSync() {
+  const { isSignedIn, getToken } = useAuth()
+
+  useEffect(() => {
+    async function syncToken() {
+      if (!isSignedIn) {
+        await chrome.storage.local.remove("clerk_token")
+        return
+      }
+
+      const token = await getToken({
+        template: "convex"
+      })
+
+      if (token) {
+        await chrome.storage.local.set({ clerk_token: token })
+      }
+    }
+
+    void syncToken()
+  }, [getToken, isSignedIn])
+
+  return null
+}
+
 export default function Popup() {
   return (
     <ClerkProvider
       publishableKey={publishableKey}
       afterSignOutUrl="/popup.html">
+      <ClerkTokenSync />
       <ConvexProviderWithAuth client={convex} useAuth={useConvexClerkAuth}>
         <div className="min-h-[600px] min-w-[600px] p-4">
           <Show when="signed-out">

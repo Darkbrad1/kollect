@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@clerk/chrome-extension": "^3.1.5",
+    "@plasmohq/messaging": "^0.7.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
@@ -44,7 +45,10 @@
     "key": "$CRX_PUBLIC_KEY",
     "permissions": [
       "cookies",
-      "storage"
+      "storage",
+      "contextMenus",
+      "tabs",
+      "activeTab"
     ],
     "host_permissions": [
       "http://localhost/*",
