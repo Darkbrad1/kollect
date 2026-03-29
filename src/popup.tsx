@@ -63,7 +63,7 @@ export default function Popup() {
       afterSignOutUrl="/popup.html">
       <ClerkTokenSync />
       <ConvexProviderWithAuth client={convex} useAuth={useConvexClerkAuth}>
-        <div className="min-h-[600px] min-w-[600px] p-4">
+        <div className="min-h-[600px] min-w-[800px] p-4">
           <Show when="signed-out">
             <div className="flex flex-col gap-3">
               <h1 className="text-lg font-bold">Manga Tracker</h1>

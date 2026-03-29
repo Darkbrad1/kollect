@@ -1,17 +1,14 @@
-import type { PlasmoMessaging } from "@plasmohq/messaging"
+import { withAuth } from "~background/withAuth"
+import { handleProgressUpdate } from "~lib/manga/handler"
 
-import { handleProgressUpdate } from "../../lib/manga/handler"
-
-const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  const { manga, token } = req.body
-
-  if (!token) {
-    res.send({ ok: false, error: "Missing auth token" })
-    return
-  }
+// Background message handler for reading progress updates.
+//
+// The content script sends scraped manga data and current scroll percentage.
+// The auth token is looked up in the background and passed into the handler.
+export default withAuth(async (req, res, token) => {
+  const { manga } = req.body
 
   await handleProgressUpdate(manga, token)
-  res.send({ ok: true })
-}
 
-export default handler
+  res.send({ ok: true })
+})

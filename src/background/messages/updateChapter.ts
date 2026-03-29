@@ -1,17 +1,14 @@
-import type { PlasmoMessaging } from "@plasmohq/messaging"
+import { withAuth } from "~background/withAuth"
+import { handleChapterUpdate } from "~lib/manga/handler"
 
-import { handleChapterUpdate } from "../../lib/manga/handler"
-
-const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  const { manga, token } = req.body
-
-  if (!token) {
-    res.send({ ok: false, error: "Missing auth token" })
-    return
-  }
+// Background message handler for chapter changes detected by the content script.
+//
+// The content script sends only the scraped manga data.
+// This handler resolves auth internally and then applies business logic.
+export default withAuth(async (req, res, token) => {
+  const { manga } = req.body
 
   await handleChapterUpdate(manga, token)
-  res.send({ ok: true })
-}
 
-export default handler
+  res.send({ ok: true })
+})

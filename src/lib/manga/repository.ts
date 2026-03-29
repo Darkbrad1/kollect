@@ -7,11 +7,13 @@ import { createAuthedConvexClient } from "~lib/convexHttp"
 import { getHostname, normalizeTitle } from "./parser"
 import type { Manga, PartialManga } from "./types"
 
+// Fetch all mangas for the authenticated user from Convex.
 export async function fetchMangas(token: string) {
   const convex = createAuthedConvexClient(token)
   return await convex.query(api.manga.listManga)
 }
 
+// Create a manga document in Convex.
 export async function addManga(data: Manga, token: string) {
   const convex = createAuthedConvexClient(token)
 
@@ -30,6 +32,7 @@ export async function addManga(data: Manga, token: string) {
   })
 }
 
+// Update an existing manga document by ID.
 export async function updateManga(
   id: Id<"Manga">,
   data: PartialManga,
@@ -43,6 +46,12 @@ export async function updateManga(
   })
 }
 
+// Find a manga that most likely matches the current scraped title/site.
+//
+// Matching strategy:
+// 1. exact normalized title match
+// 2. exact match against alternative titles
+// 3. fallback to same-host + partial title similarity
 export async function findExistingManga(
   title: string,
   token: string,
@@ -52,6 +61,7 @@ export async function findExistingManga(
   const normalizedTitle = normalizeTitle(title)
   const hostname = url ? getHostname(url) : ""
 
+  // First pass: exact normalized title matching.
   const exactMatch = mangas.find((manga) => {
     if (normalizeTitle(manga.display_title) === normalizedTitle) {
       return true
@@ -64,8 +74,10 @@ export async function findExistingManga(
 
   if (exactMatch) return exactMatch
 
+  // If no URL is available, we cannot do same-host fallback matching.
   if (!hostname) return undefined
 
+  // Second pass: if the site matches, allow looser title matching.
   return mangas.find((manga) => {
     const urls = [manga.site_url, ...manga.alternative_sites]
     const sameHost = urls.some((site) => getHostname(site) === hostname)
@@ -73,11 +85,13 @@ export async function findExistingManga(
     if (!sameHost) return false
 
     const display = normalizeTitle(manga.display_title)
+
     if (display.includes(normalizedTitle)) return true
     if (normalizedTitle.includes(display)) return true
 
     return manga.alternative_titles.some((alt) => {
       const normalizedAlt = normalizeTitle(alt)
+
       return (
         normalizedAlt.includes(normalizedTitle) ||
         normalizedTitle.includes(normalizedAlt)
