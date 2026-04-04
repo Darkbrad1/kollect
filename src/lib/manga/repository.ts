@@ -35,7 +35,7 @@ export async function addManga(data: Manga, token: string) {
   await convex.mutation(api.manga.createManga, {
     display_title: data.display_title,
     cover_url: mangadex?.cover_url || data.cover_url,
-    alternative_titles: data.alternative_titles,
+    alternative_titles: mangadex?.alternative_titles || data.alternative_titles,
     chapter_number: data.chapter_number,
     last_read_timeStamp: data.last_read_timeStamp,
     scroll_percentage: data.scroll_percentage,

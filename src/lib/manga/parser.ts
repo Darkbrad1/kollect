@@ -20,9 +20,7 @@ export function getHostname(url: string): string {
 }
 
 export function normalizeTitle(title: string): string {
-  let rawTitle = title.toLowerCase().replace(/\|/g, "").replace(/\s{2,}/g, " ")
-
-  rawTitle = rawTitle.trim()
+  let rawTitle = title.toLowerCase().replace(/\s{2,}/g, " ").trim()
 
   const sourceRegex = new RegExp(
     `\\s*[-–—:|•]?\\s*(${scanlationSources
@@ -30,6 +28,14 @@ export function normalizeTitle(title: string): string {
       .join("|")})\\s*$`,
     "i"
   )
+
+  const splitByPipe = rawTitle.split("|").map((part) => part.trim())
+  if (
+    splitByPipe.length >= 3 &&
+    /^(chapter|ch\.?|episode|ep\.?)\s*\d+(\.\d+)?/i.test(splitByPipe[0])
+  ) {
+    rawTitle = splitByPipe[1]
+  }
 
   const splitByBullet = rawTitle.split("•")
   if (splitByBullet.length > 1 && splitByBullet[1].trim().length < 30) {
@@ -39,11 +45,11 @@ export function normalizeTitle(title: string): string {
   rawTitle = rawTitle.replace(sourceRegex, "").trim()
 
   const chapterAtStartMatch = rawTitle.match(
-    /^chapter\s*\d+(\.\d+)?(\s*\([^)]+\))?\s*[-–—:|,]\s*(.+)$/i
+    /^(chapter|ch\.?|episode|ep\.?)\s*\d+(\.\d+)?(\s*\([^)]+\))?\s*[-–—:|,]\s*(.+)$/i
   )
 
   if (chapterAtStartMatch) {
-    rawTitle = chapterAtStartMatch[3].trim()
+    rawTitle = chapterAtStartMatch[4].trim()
   }
 
   const chapterAtEndMatch = rawTitle.match(
@@ -62,7 +68,10 @@ export function normalizeTitle(title: string): string {
     rawTitle = match[1].trim()
   }
 
-  rawTitle = rawTitle.replace(/\s*[-–—:|•]+\s*$/g, "").trim()
+  rawTitle = rawTitle
+    .replace(/\|/g, "")
+    .replace(/\s*[-–—:|•]+\s*$/g, "")
+    .trim()
 
   return rawTitle
 }
