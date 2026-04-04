@@ -5,7 +5,8 @@ import { ConvexProviderWithAuth } from "convex/react"
 
 import AddMangaButton from "~components/AddMangaButton"
 import { AppStateProvider } from "~components/AppStateProvider"
-import RenderMangas from "~components/RenderMangas"
+import Main from "~components/Main"
+import NavigationBar from "~components/NavigationBar"
 import { Button } from "~components/ui/button"
 import { Input } from "~components/ui/input"
 import { convex } from "~lib/convex"
@@ -24,13 +25,11 @@ function openSignInPage() {
     url: chrome.runtime.getURL("tabs/auth.html?mode=sign-in")
   })
 }
-
 function openSignUpPage() {
   chrome.tabs.create({
     url: chrome.runtime.getURL("tabs/auth.html?mode=sign-up")
   })
 }
-
 function ClerkTokenSync() {
   const { isSignedIn, getToken } = useAuth()
 
@@ -55,7 +54,6 @@ function ClerkTokenSync() {
 
   return null
 }
-
 export default function Popup() {
   return (
     <ClerkProvider
@@ -63,10 +61,10 @@ export default function Popup() {
       afterSignOutUrl="/popup.html">
       <ClerkTokenSync />
       <ConvexProviderWithAuth client={convex} useAuth={useConvexClerkAuth}>
-        <div className="min-h-[600px] min-w-[800px] p-4">
+        <div className="min-h-[600px] min-w-[800px]">
           <Show when="signed-out">
             <div className="flex flex-col gap-3">
-              <h1 className="text-lg font-bold">Manga Tracker</h1>
+              <h1 className="text-lg font-bold">Kollect</h1>
 
               <Button onClick={openSignInPage}>Sign in</Button>
               <Button variant="outline" onClick={openSignUpPage}>
@@ -78,12 +76,8 @@ export default function Popup() {
 
           <Show when="signed-in">
             <AppStateProvider>
-              <div className="mb-4 flex justify-between">
-                <h1 className="font-bold">Manga Tracker</h1>
-                <UserButton />
-              </div>
-              <AddMangaButton />
-              <RenderMangas />
+              <NavigationBar />
+              <Main />
             </AppStateProvider>
           </Show>
         </div>

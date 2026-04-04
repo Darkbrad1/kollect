@@ -2,8 +2,8 @@ import { sendToBackground } from "@plasmohq/messaging"
 
 import { buildMangaDataFromDocument } from "~lib/manga/scraper"
 
-import { contentState } from "./state"
-import { getScrollPercentage } from "./utils/scroll"
+import { contentState } from "../state"
+import { getScrollPercentage } from "./scroll"
 
 /**
  * Send a reading progress update to the background.

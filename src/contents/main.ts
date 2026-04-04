@@ -1,6 +1,6 @@
 import type { PlasmoCSConfig } from "plasmo"
 
-import { sendAddManga } from "./senders"
+import { sendAddManga } from "./utils/senders"
 import { registerWatchers } from "./utils/watchers"
 
 /**

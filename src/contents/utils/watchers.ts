@@ -1,4 +1,4 @@
-import { sendChapterChange, sendProgress } from "../senders"
+import { sendChapterChange, sendProgress } from "./senders"
 import { contentState } from "../state"
 import { throttle } from "./throttle"
 

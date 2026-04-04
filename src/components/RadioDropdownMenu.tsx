@@ -6,7 +6,7 @@
 // import * as React from "react";
 
 // Import global app state hook for view management
-import { useAppState } from "~components/AppStateProvider.tsx"
+import { useAppState } from "~components/AppStateProvider"
 // Import Button UI component
 import { Button } from "~components/ui/button"
 // Import dropdown menu components
