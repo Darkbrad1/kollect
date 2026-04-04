@@ -5,21 +5,36 @@ import { api } from "convex/_generated/api"
 import { createAuthedConvexClient } from "~lib/convexHttp"
 
 import { getHostname, normalizeTitle } from "./parser"
-import type { Manga, PartialManga } from "./types"
+import type { Manga, PartialManga, MangaDexManga} from "./types"
 
 // Fetch all mangas for the authenticated user from Convex.
 export async function fetchMangas(token: string) {
   const convex = createAuthedConvexClient(token)
   return await convex.query(api.manga.listManga)
 }
+// Fetch the mangadex id for a given manga
+export async function fetchMangaDexId(
+  title: string,
+  token: string
+): Promise<MangaDexManga | undefined> {
+  const convex = createAuthedConvexClient(token);
+  const data = await convex.action(api.mangadex.searchMangaByTitle, {
+    title,
+  });
 
+  return data[0];
+}
 // Create a manga document in Convex.
 export async function addManga(data: Manga, token: string) {
   const convex = createAuthedConvexClient(token)
-
+  const mangadex = await fetchMangaDexId(data.display_title, token)
+  if (!mangadex) {
+    console.log("No MangaDex match found for title:", data.display_title);
+  }
+  console.log("MangaDex search result:", mangadex);
   await convex.mutation(api.manga.createManga, {
     display_title: data.display_title,
-    cover_url: data.cover_url,
+    cover_url: mangadex?.cover_url || data.cover_url,
     alternative_titles: data.alternative_titles,
     chapter_number: data.chapter_number,
     last_read_timeStamp: data.last_read_timeStamp,
@@ -28,7 +43,7 @@ export async function addManga(data: Manga, token: string) {
     site_name: data.site_name,
     site_url: data.site_url,
     alternative_sites: data.alternative_sites,
-    mangadex_id: data.mangadex_id
+    mangadex_id: mangadex?.id || data.mangadex_id
   })
 }
 
@@ -99,3 +114,4 @@ export async function findExistingManga(
     })
   })
 }
+

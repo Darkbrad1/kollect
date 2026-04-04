@@ -34,3 +34,11 @@ export type PartialManga = {
   alternative_sites?: string[]
   mangadex_id?: string
 }
+
+
+export type MangaDexManga = {
+  id: string;
+  title: string;
+  alternative_titles: string[];
+  cover_url: string | null;
+};
