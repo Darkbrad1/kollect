@@ -2,6 +2,7 @@ import type { Manga } from "./types"
 
 import { isSameHostname } from "./parser"
 import { addManga, findExistingManga, updateManga } from "./repository"
+import { toast } from "sonner"
 
 // Handle a manual "add manga" action.
 //
@@ -53,7 +54,7 @@ export async function handleAddManga(newData: Manga, token: string) {
   }
 
   // Otherwise create a brand-new manga entry.
-  await addManga(newData, token)
+  return await addManga(newData, token)
 }
 
 // Handle scroll/progress updates from the reader page.

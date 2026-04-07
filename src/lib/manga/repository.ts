@@ -32,7 +32,7 @@ export async function addManga(data: Manga, token: string) {
     console.log("No MangaDex match found for title:", data.display_title);
   }
   console.log("MangaDex search result:", mangadex);
-  await convex.mutation(api.manga.createManga, {
+  return await convex.mutation(api.manga.createManga, {
     display_title: data.display_title,
     cover_url: mangadex?.cover_url || data.cover_url,
     alternative_titles: mangadex?.alternative_titles || data.alternative_titles,
@@ -45,6 +45,7 @@ export async function addManga(data: Manga, token: string) {
     alternative_sites: data.alternative_sites,
     mangadex_id: mangadex?.id || data.mangadex_id
   })
+  // console.log("Created manga with ID:", result)
 }
 
 // Update an existing manga document by ID.
