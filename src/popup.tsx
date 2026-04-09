@@ -10,9 +10,11 @@ import NavigationBar from "~components/NavigationBar"
 import { Button } from "~components/ui/button"
 import { Input } from "~components/ui/input"
 import { convex } from "~lib/convex"
+import Signin from "~components/SignIn"
 import { useConvexClerkAuth } from "~lib/useConvexClerkAuth"
 
 import "~style.css"
+import SignIn from "~components/SignIn"
 
 const publishableKey = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY
 
@@ -20,16 +22,6 @@ if (!publishableKey) {
   throw new Error("Missing PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY")
 }
 
-function openSignInPage() {
-  chrome.tabs.create({
-    url: chrome.runtime.getURL("tabs/auth.html?mode=sign-in")
-  })
-}
-function openSignUpPage() {
-  chrome.tabs.create({
-    url: chrome.runtime.getURL("tabs/auth.html?mode=sign-up")
-  })
-}
 function ClerkTokenSync() {
   const { isSignedIn, getToken } = useAuth()
 
@@ -63,15 +55,7 @@ export default function Popup() {
       <ConvexProviderWithAuth client={convex} useAuth={useConvexClerkAuth}>
         <div className="min-h-[600px] min-w-[800px]">
           <Show when="signed-out">
-            <div className="flex flex-col gap-3">
-              <h1 className="text-lg font-bold">Kollect</h1>
-
-              <Button onClick={openSignInPage}>Sign in</Button>
-              <Button variant="outline" onClick={openSignUpPage}>
-                Sign up
-              </Button>
-              <Input />
-            </div>
+              <SignIn></SignIn>
           </Show>
 
           <Show when="signed-in">
