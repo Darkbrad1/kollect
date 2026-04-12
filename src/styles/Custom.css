@@ -1,0 +1,43 @@
+.custom-edge {
+    position: relative;
+    &::after {
+        content: "";
+        position: absolute;
+        inset: -0.1rem;
+        /* background: linear-gradient(-45deg, var(--clr-surface-a0), #404040); */
+        background: linear-gradient(-45deg, #171717, #404040);
+        z-index: -1;
+        border-radius: inherit;
+    }
+}
+
+.status-wrapper {
+    position: relative;
+    .status-tab {
+        position: relative;
+        z-index: 10;
+        &.active {
+            anchor-name: --active;
+            color: black;
+            &:hover{
+                background-color: transparent;
+            }
+        }
+        /* &:hover {
+            anchor-name: --hover;
+        } */
+    }
+}
+.bubble {
+    z-index: 1;
+    position: absolute;
+    background-color: var(--clr-primary-a0);
+    top: anchor(top);
+    right: anchor(right);
+    bottom: anchor(bottom);
+    left: anchor(left);
+    border-radius: 100vh;
+    transition: all 0.2s;
+    position-anchor: --active;
+
+}

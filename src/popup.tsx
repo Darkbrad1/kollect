@@ -1,20 +1,20 @@
-import { useEffect } from "react"
-
-import { ClerkProvider, Show, UserButton, useAuth } from "@clerk/chrome-extension"
+import {
+  ClerkProvider,
+  Show,
+  useAuth,
+  UserButton
+} from "@clerk/chrome-extension"
 import { ConvexProviderWithAuth } from "convex/react"
+import { useEffect } from "react"
+import { AppStateProvider } from "~/components/AppStateProvider"
+import Main from "~/components/Main"
+import NavigationBar from "~/components/NavigationBar"
+import { convex } from "~/lib/convex"
+import { useConvexClerkAuth } from "~/lib/useConvexClerkAuth"
 
-import AddMangaButton from "~components/AddMangaButton"
-import { AppStateProvider } from "~components/AppStateProvider"
-import Main from "~components/Main"
-import NavigationBar from "~components/NavigationBar"
-import { Button } from "~components/ui/button"
-import { Input } from "~components/ui/input"
-import { convex } from "~lib/convex"
-import Signin from "~components/SignIn"
-import { useConvexClerkAuth } from "~lib/useConvexClerkAuth"
+import "~/style.css"
 
-import "~style.css"
-import SignIn from "~components/SignIn"
+import SignIn from "~/components/SignIn"
 
 const publishableKey = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY
 
@@ -55,7 +55,7 @@ export default function Popup() {
       <ConvexProviderWithAuth client={convex} useAuth={useConvexClerkAuth}>
         <div className="min-h-[600px] min-w-[800px]">
           <Show when="signed-out">
-              <SignIn></SignIn>
+            <SignIn></SignIn>
           </Show>
 
           <Show when="signed-in">
