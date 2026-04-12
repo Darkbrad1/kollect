@@ -1,7 +1,9 @@
 import type { PlasmoCSConfig } from "plasmo"
-import { styles } from "./getStyle"
-import { Button } from "~components/ui/button"
 import { toast } from "sonner"
+
+import { Button } from "~/components/ui/button"
+
+import { styles } from "./getStyle"
 
 export const getStyle = () => styles()
 export const config: PlasmoCSConfig = {
@@ -13,9 +15,10 @@ const handleClick = () => {
 
 const PlasmoOverlay = () => {
   return (
-  <Button onClick={handleClick} className=" fixed bottom-10 left-10">
-    Show Toast
-  </Button>
+    // <Button onClick={handleClick} className=" fixed bottom-10 left-10">
+    //   Show Toast
+    // </Button>
+    <></>
   )
 }
 

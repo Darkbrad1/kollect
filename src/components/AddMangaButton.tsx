@@ -1,23 +1,23 @@
-import { api } from "convex/_generated/api";
-import { useAction, useMutation } from "convex/react";
+import { api } from "convex/_generated/api"
+import { useAction, useMutation } from "convex/react"
 
-import { Button } from "~components/ui/button";
+import { Button } from "~/components/ui/button"
 
 function AddMangaButton() {
   // Action: search MangaDex by title
-  const searchManga = useAction(api.mangadex.searchMangaByTitle);
+  const searchManga = useAction(api.mangadex.searchMangaByTitle)
 
   // Mutation: save manga to Convex
-  const createManga = useMutation(api.manga.createManga);
+  const createManga = useMutation(api.manga.createManga)
 
   async function handleAdd() {
     const results = await searchManga({
-      title: "eternally regressing knight",
-    });
+      title: "eternally regressing knight"
+    })
 
-    if (!results.length) return;
+    if (!results.length) return
 
-    const manga = results[0];
+    const manga = results[0]
 
     await createManga({
       display_title: manga.title,
@@ -30,15 +30,15 @@ function AddMangaButton() {
       site_name: "MangaDex",
       site_url: "https://mangadex.org",
       alternative_sites: [],
-      mangadex_id: manga.id,
-    });
+      mangadex_id: manga.id
+    })
   }
 
   return (
     <Button className="m-3 p-6" onClick={handleAdd}>
       click to add manga
     </Button>
-  );
+  )
 }
 
-export default AddMangaButton;
+export default AddMangaButton

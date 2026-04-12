@@ -1,11 +1,10 @@
+import { api } from "convex/_generated/api"
 import type { Id } from "convex/_generated/dataModel"
 
-import { api } from "convex/_generated/api"
-
-import { createAuthedConvexClient } from "~lib/convexHttp"
+import { createAuthedConvexClient } from "~/lib/convexHttp"
 
 import { getHostname, normalizeTitle } from "./parser"
-import type { Manga, PartialManga, MangaDexManga} from "./types"
+import type { Manga, MangaDexManga, PartialManga } from "./types"
 
 // Fetch all mangas for the authenticated user from Convex.
 export async function fetchMangas(token: string) {
@@ -17,21 +16,21 @@ export async function fetchMangaDexId(
   title: string,
   token: string
 ): Promise<MangaDexManga | undefined> {
-  const convex = createAuthedConvexClient(token);
+  const convex = createAuthedConvexClient(token)
   const data = await convex.action(api.mangadex.searchMangaByTitle, {
-    title,
-  });
+    title
+  })
 
-  return data[0];
+  return data[0]
 }
 // Create a manga document in Convex.
 export async function addManga(data: Manga, token: string) {
   const convex = createAuthedConvexClient(token)
   const mangadex = await fetchMangaDexId(data.display_title, token)
   if (!mangadex) {
-    console.log("No MangaDex match found for title:", data.display_title);
+    console.log("No MangaDex match found for title:", data.display_title)
   }
-  console.log("MangaDex search result:", mangadex);
+  console.log("MangaDex search result:", mangadex)
   return await convex.mutation(api.manga.createManga, {
     display_title: data.display_title,
     cover_url: mangadex?.cover_url || data.cover_url,
@@ -115,4 +114,3 @@ export async function findExistingManga(
     })
   })
 }
-

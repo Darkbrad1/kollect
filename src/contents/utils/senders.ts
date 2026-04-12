@@ -2,7 +2,7 @@ import { toast } from "sonner"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
-import { buildMangaDataFromDocument } from "~lib/manga/scraper"
+import { buildMangaDataFromDocument } from "~/lib/manga/scraper"
 
 import { contentState } from "../state"
 import { getScrollPercentage } from "./scroll"
@@ -63,12 +63,14 @@ export async function sendChapterChange() {
 export async function sendAddManga() {
   const manga = buildMangaDataFromDocument(location.href, getScrollPercentage())
 
- const result = await sendToBackground({
+  const result = await sendToBackground({
     name: "addManga",
     body: { manga }
   })
-  if (!result){
-    toast.error(`Something went wrong while adding ${manga.display_title}`, { description: "check if the manga is already added" })
+  if (!result) {
+    toast.error(`Something went wrong while adding ${manga.display_title}`, {
+      description: "check if the manga is already added"
+    })
   } else {
     toast.success(`${manga.display_title} was added successfully`)
   }

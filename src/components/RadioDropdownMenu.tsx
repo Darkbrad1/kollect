@@ -6,9 +6,9 @@
 // import * as React from "react";
 
 // Import global app state hook for view management
-import { useAppState } from "~components/AppStateProvider"
+import { useAppState } from "~/components/AppStateProvider"
 // Import Button UI component
-import { Button } from "~components/ui/button"
+import { Button } from "~/components/ui/button"
 // Import dropdown menu components
 import {
   DropdownMenu,
@@ -18,7 +18,7 @@ import {
   DropdownMenuRadioItem,
   // DropdownMenuSeparator,
   DropdownMenuTrigger
-} from "~components/ui/dropdown-menu"
+} from "~/components/ui/dropdown-menu"
 
 export function RadioDropdownMenu() {
   // Access current view and setter from global app state

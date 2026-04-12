@@ -1,4 +1,4 @@
-import "~style.css"
+import "~/style.css"
 
 import { ClerkProvider, SignIn, SignUp } from "@clerk/chrome-extension"
 
@@ -25,7 +25,9 @@ export default function AuthPage() {
       signUpFallbackRedirectUrl={`${EXTENSION_URL}tabs/auth.html`}>
       <div className="grid place-content-center min-h-screen">
         {mode === "sign-in" ? (
-          <SignIn routing="hash" />
+          <SignIn
+            routing="hash"
+          />
         ) : (
           <SignUp routing="hash" />
         )}

@@ -1,5 +1,5 @@
-import { withAuth } from "~background/withAuth"
-import { handleAddManga } from "~lib/manga/handler"
+import { withAuth } from "~/background/withAuth"
+import { handleAddManga } from "~/lib/manga/handler"
 
 // Background message handler for manually adding manga.
 //

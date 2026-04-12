@@ -1,5 +1,5 @@
-import { withAuth } from "~background/withAuth"
-import { handleChapterUpdate } from "~lib/manga/handler"
+import { withAuth } from "~/background/withAuth"
+import { handleChapterUpdate } from "~/lib/manga/handler"
 
 // Background message handler for chapter changes detected by the content script.
 //

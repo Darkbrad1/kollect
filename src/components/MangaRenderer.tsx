@@ -1,8 +1,8 @@
 import { useUser } from "@clerk/clerk-react"
 import { useQuery } from "convex/react"
 
-import CardView from "~components/CardView"
-import DetailedView from "~components/DetailedView"
+import CardView from "~/components/CardView"
+import DetailedView from "~/components/DetailedView"
 
 import { api } from "../../convex/_generated/api"
 import { useAppState } from "./AppStateProvider"

@@ -1,5 +1,5 @@
-import { useAppState } from "~components/AppStateProvider.tsx"
-import { Input } from "~components/ui/input"
+import { useAppState } from "~/components/AppStateProvider.tsx"
+import { Input } from "~/components/ui/input"
 
 // SearchBox component provides a text input for filtering manga
 export default function SearchBox() {

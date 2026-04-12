@@ -1,6 +1,6 @@
 import type { Doc } from "convex/_generated/dataModel"
 
-import PercentageBar from "~components/DetailedViewCardPercentageBar"
+import PercentageBar from "~/components/DetailedViewCardPercentageBar"
 import { useRelativeTime } from "~hooks/useRelativeTime"
 
 type DataProp = {

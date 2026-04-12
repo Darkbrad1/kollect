@@ -1,5 +1,5 @@
 // get-style.ts
-import cssText from "data-text:~style.css"
+import cssText from "data-text:~/style.css"
 
 export const styles = (): HTMLStyleElement => {
   const baseFontSize = 16
