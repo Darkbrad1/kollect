@@ -5,6 +5,19 @@
 @tailwind utilities;
 
 @layer base {
+    * {
+    @apply border-border;
+  }
+
+  :host,
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", sans-serif;
+    background-color: var(--clr-surface-a0);
+  }
+  html{
+    overflow-x: hidden;
+  }
   :root {
     color-scheme: dark light;
     /** Base colors */
@@ -104,16 +117,7 @@
     --text-clr-2: oklch(67% 0.0001 271.152);
   }
 
-  * {
-    @apply border-border;
-  }
 
-  :host,
-  body {
-    @apply bg-background text-foreground;
-    font-family: "Inter", sans-serif;
-    background-color: var(--clr-surface-a0);
-  }
 }
 
 #plasmo-shadow-container {

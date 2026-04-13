@@ -19,7 +19,7 @@
         &.active {
             anchor-name: --active;
             color: black;
-            &:hover{
+            &:hover {
                 background-color: transparent;
             }
         }
@@ -39,5 +39,22 @@
     border-radius: 100vh;
     transition: all 0.2s;
     position-anchor: --active;
+}
+.card-style {
+    display: grid;
 
+    * {
+        grid-area: header body footer;
+        grid-column: 1 / -1;
+        grid-row: 1 / -1;
+    }
+    .overlay {
+        --edge-shading: oklch(0% 0 0 / 0.755);
+        background:
+        /* linear-gradient(var(--edge-shading), transparent), */ linear-gradient(
+            var(--edge-shading),
+            transparent,
+            var(--edge-shading)
+        );
+    }
 }

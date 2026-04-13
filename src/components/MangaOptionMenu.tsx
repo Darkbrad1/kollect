@@ -1,151 +1,156 @@
-import { api } from "convex/_generated/api"
-import type { Doc } from "convex/_generated/dataModel"
-import { useMutation } from "convex/react"
+import { api } from "convex/_generated/api";
+import type { Id } from "convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
 import {
-  Archive,
-  BookMarked,
-  BookOpenText,
-  Copy,
-  EllipsisVertical,
-  LibraryBig,
-  Link,
-  SquarePen,
-  Trash2
-} from "lucide-react"
-import { useState } from "react"
+    Archive,
+    BookMarked,
+    BookOpenText,
+    Copy,
+    EllipsisVertical,
+    LibraryBig,
+    Link,
+    SquarePen,
+    Trash2,
+} from "lucide-react";
+import { useState } from "react";
 
-import { Button } from "~/components/ui/button"
+import { Button } from "~/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "~/components/ui/dropdown-menu"
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 
-import EditSheet from "./EditSheet"
-
-// import { useUser } from "@clerk/clerk-react";
-
+import EditSheet from "./EditSheet";
+import { useAppState } from "./AppStateProvider"; // adjust path if needed
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+    Archive02Icon,
+    LibraryIcon,
+    BookBookmark02Icon,
+    BookOpen02Icon,
+    MoreHorizontalIcon,
+    ClipboardCopyIcon,
+    Link04Icon,
+    Edit02Icon,
+    Delete02Icon,
+} from "@hugeicons/core-free-icons";
+import Item from "./MangaOptionMenuItem";
 type OptionMenuProps = {
-  data: Doc<"Manga">
-  type?: "ghost"
-}
+    id: Id<"Manga">;
+    type?: "ghost";
+};
 
-export default function MangaOptionMenu({ data, type }: OptionMenuProps) {
-  // data is used to get data about the manga that was selected
-  // const [editOpen, setEditOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false)
-  const updateManga = useMutation(api.manga.updateManga)
-  const deleteManga = useMutation(api.manga.deleteManga)
-  // const {user} = useUser();
-  function CopyValue(value: string) {
-    navigator.clipboard.writeText(value)
-  }
-  const iconHoverStyle = "focus:text-accent-foreground"
-  // if(!user){
-  //     return <>{console.error("No user Signed In")}</>
-  // }
-  return (
-    <>
-      {/* 1) The Sheet lives here and is controlled by state */}
-      <EditSheet editOpen={editOpen} setEditOpen={setEditOpen} data={data} />
+export default function AtaMangaOptionMenu({ id, type }: OptionMenuProps) {
+    const [editOpen, setEditOpen] = useState(false);
+    const manga = useQuery(api.manga.getMangaById, { id });
+    const updateManga = useMutation(api.manga.updateManga);
+    const deleteManga = useMutation(api.manga.deleteManga);
 
-      {/* 2) Your dropdown menu */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            className={`options [grid-area:manga] rounded-lg hover:bg-zinc-800 bg-zinc-800/50 m-1 ${type === "ghost" ? "invisible self-start" : "self-center hover:bg-zinc-700"}`}>
-            <EllipsisVertical />
-          </Button>
-        </DropdownMenuTrigger>
+    function copyValue(value: string) {
+        navigator.clipboard.writeText(value);
+    }
+    const ItemStyle = "focus:bg-[--clr-primary-a10]";
+    return (
+        <>
+            <EditSheet
+                editOpen={editOpen}
+                setEditOpen={setEditOpen}
+                data={manga}
+            />
 
-        <DropdownMenuContent className="w-56" align="center">
-          <DropdownMenuGroup>
-            <DropdownMenuItem onSelect={() => CopyValue(data.display_title)}>
-              <Copy className={iconHoverStyle} />
-              Copy Title
-            </DropdownMenuItem>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button className="rounded-full aspect-[1/1] h-6 p-1 ">
+                        <HugeiconsIcon
+                            icon={MoreHorizontalIcon}
+                            size={16}
+                            fill="white"
+                            color="currentColor"
+                            strokeWidth={1.5}
+                        />
+                    </Button>
+                </DropdownMenuTrigger>
 
-            <DropdownMenuItem onSelect={() => CopyValue(data.site_url)}>
-              <Link className={iconHoverStyle} />
-              Copy Link
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-
-          <DropdownMenuSeparator />
-
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              onSelect={() =>
-                updateManga({
-                  id: data._id,
-                  data: { status: "reading" }
-                })
-              }>
-              <BookOpenText className={iconHoverStyle} />
-              Mark as reading
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              onSelect={() =>
-                updateManga({
-                  id: data._id,
-                  data: { status: "hiatus" }
-                })
-              }>
-              <BookMarked className={iconHoverStyle} />
-              Mark as haitus
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              onSelect={() =>
-                updateManga({
-                  id: data._id,
-                  data: { status: "planned" }
-                })
-              }>
-              <LibraryBig className={iconHoverStyle} />
-              Mark as planned
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              onSelect={() =>
-                updateManga({
-                  id: data._id,
-                  data: { status: "archived" }
-                })
-              }>
-              <Archive className={iconHoverStyle} />
-              Mark as archieved
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-
-          <DropdownMenuSeparator />
-
-          <DropdownMenuGroup>
-            {/* 3) This opens the Sheet */}
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault()
-                setEditOpen(true)
-              }}>
-              <SquarePen className={iconHoverStyle} />
-              Edit Manga
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-
-          <DropdownMenuSeparator />
-
-          <DropdownMenuItem
-            className="text-destructive focus:bg-destructive"
-            onSelect={() => deleteManga({ id: data._id })}>
-            <Trash2 className={iconHoverStyle} />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
-  )
+                <DropdownMenuContent
+                    className="w-56 bg-[--clr-surface-a20]/20 backdrop-blur-md rounded-lg"
+                    align="center">
+                    <Item
+                        className={ItemStyle}
+                        label="Copy Title"
+                        icon={ClipboardCopyIcon}
+                        action={() => copyValue(manga.display_title)}
+                    />
+                    <Item
+                        className={ItemStyle}
+                        label="Copy Link"
+                        icon={Link04Icon}
+                        action={() => copyValue(manga.site_url)}
+                    />
+                    <Item
+                        className={ItemStyle}
+                        label="Mark as reading"
+                        icon={BookOpen02Icon}
+                        action={() =>
+                            updateManga({
+                                id: manga._id,
+                                data: { status: "reading" },
+                            })
+                        }
+                    />
+                    <Item
+                        className={ItemStyle}
+                        label="Mark as hiatus"
+                        icon={BookBookmark02Icon}
+                        action={() =>
+                            updateManga({
+                                id: manga._id,
+                                data: { status: "hiatus" },
+                            })
+                        }
+                    />
+                    <Item
+                        className={ItemStyle}
+                        label="Mark as planned"
+                        icon={LibraryIcon}
+                        action={() =>
+                            updateManga({
+                                id: manga._id,
+                                data: { status: "planned" },
+                            })
+                        }
+                    />
+                    <Item
+                        className={ItemStyle}
+                        label="Mark as archived"
+                        icon={Archive02Icon}
+                        action={() =>
+                            updateManga({
+                                id: manga._id,
+                                data: { status: "archived" },
+                            })
+                        }
+                    />
+                    <Item
+                        className={ItemStyle}
+                        label="Edit Manga"
+                        icon={Edit02Icon}
+                        action={(e) => {
+                            e.preventDefault();
+                            setEditOpen(true);
+                        }}
+                    />
+                    <Item
+                        className={ItemStyle}
+                        label="Delete"
+                        icon={Delete02Icon}
+                        action={() => deleteManga({ id: manga._id })}
+                    />
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </>
+    );
 }

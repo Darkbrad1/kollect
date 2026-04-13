@@ -1,11 +1,11 @@
 import type { Doc } from "convex/_generated/dataModel"
-
+import type { Manga } from "~/lib/manga/types"
 import { Sheet, SheetContent } from "~/components/ui/sheet"
 
 import EditSheetForm from "./EditSheetForm"
 
 type EditSheetProps = {
-  data: Doc<"Manga">
+  data: Manga
   editOpen: boolean
   setEditOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -14,6 +14,7 @@ export default function MangaOptionMenuEditSheet({
   setEditOpen,
   data
 }: EditSheetProps) {
+  if (!data) return null
   return (
     <Sheet open={editOpen} onOpenChange={setEditOpen}>
       <SheetContent

@@ -26,13 +26,14 @@ import {
   EditSheetInput as Input,
   EditSheetTextarea as Textarea
 } from "./EditSheetFormInputs"
+import type { Manga } from "~/lib/manga/types"
 
 // Type for the allowed update payload from your Convex mutation
 type UpdateMangaData = FunctionArgs<typeof api.manga.updateManga>["data"]
 
 // Props passed into the form
 type FormProps = {
-  data: Doc<"Manga">
+  data: Manga
   setEditOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 

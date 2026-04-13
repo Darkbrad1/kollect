@@ -129,3 +129,19 @@ export const listMangaByStatus = query({
       .collect()
   }
 })
+
+export const getMangaById = query({
+  args: {
+    id: v.id("Manga"),
+  },
+  handler: async (ctx, { id }) => {
+    const userId = await requireUser(ctx);
+    const manga = await ctx.db.get(id);
+
+    if (!manga || manga.user_id !== userId) {
+      throw new Error("Manga not found or unauthorized");
+    }
+
+    return manga;
+  },
+});
