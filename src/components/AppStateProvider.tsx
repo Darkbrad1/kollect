@@ -1,18 +1,19 @@
 import React, { createContext, useContext, useState } from "react";
-
+import type { Id } from "convex/_generated/dataModel";
 // Define the shape of the global app state stored in context
+type Status = "reading" | "planned" | "hiatus" | "archived";
+
 type AppState = {
     // Current view mode (e.g., "Detailed", "Card")
     view: string;
     setView: (v: string) => void;
-
     // Current search query
     search: string;
     setSearch: (s: string) => void;
 
     // Current page/section of the app (e.g., "reading", "planned")
-    page: string;
-    setPage: (v: string) => void;
+    status: Status;
+    setStatus: (v: Status) => void;
 };
 
 // Create the context with a default null value
@@ -25,12 +26,21 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     const [view, setView] = useState("Card");
     // State for storing the current search input
     const [search, setSearch] = useState("");
-    // State for tracking which page the user is on
-    const [page, setPage] = useState("reading");
+    // State for tracking which status the user is on
+    const [status, setStatus] = useState<Status>("reading");
+
+
     // Provide state values and their setters to all child components
     return (
         <AppStateContext.Provider
-            value={{ view, setView, search, setSearch, page, setPage }}>
+            value={{
+                view,
+                setView,
+                search,
+                setSearch,
+                status,
+                setStatus,
+            }}>
             {children}
         </AppStateContext.Provider>
     );

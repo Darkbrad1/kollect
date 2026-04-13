@@ -6,10 +6,10 @@ import {
     BookBookmark02Icon,
     BookOpen02Icon,
 } from "@hugeicons/core-free-icons";
-type Tab = "reading" | "bookmarks" | "library" | "archive";
+import { useAppState } from "./AppStateProvider"
 
 export default function NavigationBarStatusTabs() {
-    const [activeTab, setActiveTab] = useState<Tab>("reading");
+    const { status, setStatus } = useAppState()
 
     return (
         <div className="rounded-full bg-[--clr-surface-a10] custom-edge status-wrapper">
@@ -17,38 +17,38 @@ export default function NavigationBarStatusTabs() {
 
             <NavButton
                 className={`hover:bg-[--clr-surface-a20] status-tab hover:text-[white] ${
-                    activeTab === "reading" ? "active" : ""
+                    status === "reading" ? "active" : ""
                 }`}
                 variant="ghost"
                 icon={BookOpen02Icon}
-                onClick={() => setActiveTab("reading")}
+                onClick={() => setStatus("reading")}
             />
 
             <NavButton
                 className={`hover:bg-[--clr-surface-a20] status-tab hover:text-[white] ${
-                    activeTab === "bookmarks" ? "active" : ""
+                    status === "planned" ? "active" : ""
                 }`}
                 variant="ghost"
                 icon={BookBookmark02Icon}
-                onClick={() => setActiveTab("bookmarks")}
+                onClick={() => setStatus("planned")}
             />
 
             <NavButton
                 className={`hover:bg-[--clr-surface-a20] status-tab hover:text-[white] ${
-                    activeTab === "library" ? "active" : ""
+                    status === "hiatus" ? "active" : ""
                 }`}
                 variant="ghost"
                 icon={LibraryIcon}
-                onClick={() => setActiveTab("library")}
+                onClick={() => setStatus("hiatus")}
             />
 
             <NavButton
                 className={`hover:bg-[--clr-surface-a20] status-tab hover:text-[white] ${
-                    activeTab === "archive" ? "active" : ""
+                    status === "archived" ? "active" : ""
                 }`}
                 variant="ghost"
                 icon={Archive02Icon}
-                onClick={() => setActiveTab("archive")}
+                onClick={() => setStatus("archived")}
             />
         </div>
     );

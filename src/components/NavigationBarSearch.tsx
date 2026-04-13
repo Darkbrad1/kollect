@@ -2,10 +2,13 @@ import { Input } from "~/components/ui/input";
 import { Search01Icon } from "@hugeicons/core-free-icons";
 import NavButton from "./NavigationBarButton";
 import { useEffect, useRef, useState } from "react";
+import { useAppState } from "./AppStateProvider"
+
 
 export default function NavigationBarSearch() {
     const [searchOpen, setSearchOpen] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
+    const { search, setSearch } = useAppState();
 
     useEffect(() => {
         if (searchOpen) {
@@ -31,6 +34,10 @@ export default function NavigationBarSearch() {
                     placeholder="Search..."
                     onBlur={() => setSearchOpen(false)}
                     style={{ outline: "none", boxShadow: "none" }}
+                    onChange={(e) =>
+                        // Update search state in lowercase for case-insensitive matching
+                        setSearch(e.target.value)
+                    }
                     className="h-full w-[200px] rounded-full border-0 bg-transparent shadow-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
                 />
             </div>

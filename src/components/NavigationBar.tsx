@@ -7,7 +7,7 @@ import "../styles/Custom.css";
 export default function NavigationBar() {
 
     return (
-        <div className="flex w-full justify-between p-2">
+        <div className="flex w-full justify-between">
             <Search />
             <StatusTabs />
             <Button
