@@ -22,7 +22,7 @@ import { SidebarTrigger } from "~/components/ui/sidebar";
 
 export function AppSidebar() {
     return (
-        <Sidebar side="right" variant="floating" >
+        <Sidebar side="right" variant="floating">
             <SidebarHeader className="flex flex-row justify-end p-3">
                 <SidebarTrigger />
             </SidebarHeader>
@@ -30,7 +30,7 @@ export function AppSidebar() {
             <SidebarContent className="px-4 gap-0">
                 {/* Cover Image */}
                 <SidebarGroup className="items-center py-4">
-                    <div className="w-40 h-52 rounded-xl bg-[--clr-surface-a20]" />
+                    <div className="w-40 h-52 rounded-xl bg-[--clr-surface-a0]" />
                 </SidebarGroup>
 
                 {/* Title */}
@@ -40,7 +40,7 @@ export function AppSidebar() {
                     </label>
                     <SidebarGroupContent>
                         <Select>
-                            <SelectTrigger className="w-full rounded-full bg-[--clr-surface-a10] border-none h-12">
+                            <SelectTrigger className="w-full rounded-full bg-[--clr-surface-a0] border-none h-12 !text-white">
                                 <SelectValue placeholder="The name of the manga goes here" />
                             </SelectTrigger>
                             <SelectContent>
@@ -62,7 +62,7 @@ export function AppSidebar() {
                     <SidebarGroupContent>
                         <Input
                             defaultValue="358"
-                            className="rounded-full bg-[--clr-surface-a10] border-none h-12 px-5"
+                            className="rounded-full bg-[--clr-surface-a0] border-none h-12 px-5 !text-white"
                         />
                     </SidebarGroupContent>
                 </SidebarGroup>
@@ -76,20 +76,19 @@ export function AppSidebar() {
                         <ToggleGroup
                             type="single"
                             defaultValue="reading"
-                            className="w-full rounded-full bg-[--clr-surface-a10] p-1"
-                        >
+                            className="w-full rounded-full bg-[--clr-surface-a0] p-1">
                             {["reading", "library", "hiatus", "archived"].map(
                                 (s) => (
                                     <ToggleGroupItem
                                         key={s}
                                         value={s}
-                                        className="flex-1 rounded-full text-sm capitalize
-                                            data-[state=on]:bg-[--clr-surface-a20]
-                                            data-[state=on]:text-[--clr-primary-a0]"
-                                    >
+                                        className="flex-1 rounded-full text-sm capitalize !text-white
+                                                hover:!text-[--clr-primary-a0]
+                                                data-[state=on]:bg-[--clr-surface-a10]
+                                                data-[state=on]:!text-[--clr-primary-a0]">
                                         {s}
                                     </ToggleGroupItem>
-                                )
+                                ),
                             )}
                         </ToggleGroup>
                     </SidebarGroupContent>
@@ -101,7 +100,7 @@ export function AppSidebar() {
                         PROGRESS
                     </label>
                     <SidebarGroupContent>
-                        <div className="relative w-full h-12 rounded-full bg-[--clr-surface-a10] overflow-hidden flex items-center">
+                        <div className="relative w-full h-12 rounded-full bg-[--clr-surface-a0] overflow-hidden flex items-center">
                             <div
                                 className="absolute left-0 top-0 h-full rounded-full"
                                 style={{
@@ -110,7 +109,7 @@ export function AppSidebar() {
                                         "linear-gradient(to right, var(--clr-primary-a30), var(--clr-primary-a0))",
                                 }}
                             />
-                            <span className="relative ml-auto mr-4 text-sm font-semibold">
+                            <span className="relative ml-auto mr-4 text-sm font-semibold text-white">
                                 50%
                             </span>
                         </div>
@@ -124,7 +123,7 @@ export function AppSidebar() {
                     </label>
                     <SidebarGroupContent>
                         <Select>
-                            <SelectTrigger className="w-full rounded-full bg-[--clr-surface-a10] border-none h-12">
+                            <SelectTrigger className="w-full rounded-full bg-[--clr-surface-a0] border-none h-12 !text-white">
                                 <SelectValue placeholder="Asurascans" />
                             </SelectTrigger>
                             <SelectContent>
@@ -141,13 +140,12 @@ export function AppSidebar() {
 
             {/* Save / Cancel */}
             <SidebarFooter className="flex flex-row gap-3 p-4">
-                <Button className="flex-1 rounded-full bg-[--clr-surface-a20] hover:bg-[--clr-surface-a30] text-white h-12">
+                <Button className="flex-1 rounded-full bg-[--clr-surface-a0] hover:bg-[--clr-surface-a30] text-white h-12">
                     Save
                 </Button>
                 <Button
                     variant="ghost"
-                    className="flex-1 rounded-full bg-[--clr-surface-a20] hover:bg-[--clr-surface-a30] text-white h-12"
-                >
+                    className="flex-1 rounded-full bg-[--clr-surface-a0] hover:bg-[--clr-surface-a30] text-white h-12">
                     cancel
                 </Button>
             </SidebarFooter>
