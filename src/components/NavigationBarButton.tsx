@@ -3,6 +3,11 @@ import type { IconSvgElement } from "@hugeicons/react";
 import type { MouseEventHandler } from "react";
 
 import { Button } from "~/components/ui/button";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "~/components/ui/tooltip";
 
 interface NavigationBarButtonProps {
     icon?: IconSvgElement;
@@ -11,6 +16,7 @@ interface NavigationBarButtonProps {
     strokeWidth?: number;
     className?: string;
     iconClassName?: string;
+    tooltip?: string;
     variant?:
         | "default"
         | "outline"
@@ -28,10 +34,11 @@ export default function NavigationBarButton({
     strokeWidth = 1.5,
     className,
     iconClassName,
+    tooltip,
     variant = "default",
     onClick,
 }: NavigationBarButtonProps) {
-    return (
+    const button = (
         <Button
             className={`h-12 aspect-square rounded-full ${className ?? ""}`}
             variant={variant}
@@ -44,5 +51,14 @@ export default function NavigationBarButton({
                 className={iconClassName}
             />
         </Button>
+    );
+
+    if (!tooltip) return button;
+
+    return (
+        <Tooltip>
+            <TooltipTrigger asChild>{button}</TooltipTrigger>
+            <TooltipContent>{tooltip}</TooltipContent>
+        </Tooltip>
     );
 }
