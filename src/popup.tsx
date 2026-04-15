@@ -56,15 +56,15 @@ export default function Popup() {
             <ConvexProviderWithAuth
                 client={convex}
                 useAuth={useConvexClerkAuth}>
-                <div className="min-h-[600px] min-w-[800px]">
+                <div className="h-[600px] w-[800px] overflow-hidden">
                     <Show when="signed-out">
-                        <SignIn></SignIn>
+                        <SignIn />
                     </Show>
 
                     <Show when="signed-in">
                         <AppStateProvider>
                             <SidebarProvider defaultOpen={false}>
-                                <div className="flex flex-col gap-4 p-3 w-full">
+                                <div className="flex flex-col gap-4 p-3 w-full overflow-auto h-full">
                                     <NavigationBar />
                                     <Main />
                                 </div>

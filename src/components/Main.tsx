@@ -44,7 +44,7 @@ export default function RenderMangas() {
 
     // Render whichever view was selected
     return (
-        <div className="w-full flex flex-wrap gap-3 mx-auto">
+        <div className="w-full flex flex-wrap gap-3 mx-auto overflow-hidden">
             {inputMangas.map((data) => (
                 // Use the document ID as the React key for stable rendering
                 <Card
