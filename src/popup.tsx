@@ -11,7 +11,8 @@ import Main from "~/components/Main";
 import NavigationBar from "~/components/NavigationBar";
 import { convex } from "~/lib/convex";
 import { useConvexClerkAuth } from "~/lib/useConvexClerkAuth";
-
+import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
+import { AppSidebar } from "~/components/app-sidebar";
 import "~/style.css";
 
 import SignIn from "~/components/SignIn";
@@ -62,10 +63,13 @@ export default function Popup() {
 
                     <Show when="signed-in">
                         <AppStateProvider>
-                            <div className="flex flex-col gap-4 p-3">
-                                <NavigationBar />
-                                <Main />
-                            </div>
+                            <SidebarProvider defaultOpen={false}>
+                                <div className="flex flex-col gap-4 p-3 w-full">
+                                    <NavigationBar />
+                                    <Main />
+                                </div>
+                                <AppSidebar />
+                            </SidebarProvider>
                         </AppStateProvider>
                     </Show>
                 </div>

@@ -29,7 +29,7 @@ export default function NavigationBarStatusTabs() {
                     status === "planned" ? "active" : ""
                 }`}
                 variant="ghost"
-                icon={BookBookmark02Icon}
+                icon={LibraryIcon}
                 onClick={() => setStatus("planned")}
             />
 
@@ -38,7 +38,7 @@ export default function NavigationBarStatusTabs() {
                     status === "hiatus" ? "active" : ""
                 }`}
                 variant="ghost"
-                icon={LibraryIcon}
+                icon={BookBookmark02Icon}
                 onClick={() => setStatus("hiatus")}
             />
 

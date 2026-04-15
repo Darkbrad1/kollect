@@ -1,31 +1,17 @@
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
-import {
-    Archive,
-    BookMarked,
-    BookOpenText,
-    Copy,
-    EllipsisVertical,
-    LibraryBig,
-    Link,
-    SquarePen,
-    Trash2,
-} from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "~/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { useSidebar } from "~/components/ui/sidebar"; // adjust path if needed
 
-import EditSheet from "./EditSheet";
-import { useAppState } from "./AppStateProvider"; // adjust path if needed
+import { useAppState } from "./AppStateProvider";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
     Archive02Icon,
@@ -39,32 +25,29 @@ import {
     Delete02Icon,
 } from "@hugeicons/core-free-icons";
 import Item from "./MangaOptionMenuItem";
+
 type OptionMenuProps = {
     id: Id<"Manga">;
     type?: "ghost";
 };
 
 export default function AtaMangaOptionMenu({ id, type }: OptionMenuProps) {
-    const [editOpen, setEditOpen] = useState(false);
     const manga = useQuery(api.manga.getMangaById, { id });
     const updateManga = useMutation(api.manga.updateManga);
     const deleteManga = useMutation(api.manga.deleteManga);
+    const { toggleSidebar } = useSidebar();
 
     function copyValue(value: string) {
         navigator.clipboard.writeText(value);
     }
+
     const ItemStyle = "focus:bg-[--clr-primary-a10]";
+
     return (
         <>
-            <EditSheet
-                editOpen={editOpen}
-                setEditOpen={setEditOpen}
-                data={manga}
-            />
-
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button className="rounded-full aspect-[1/1] h-6 p-1 ">
+                    <Button className="rounded-full aspect-[1/1] h-6 p-1">
                         <HugeiconsIcon
                             icon={MoreHorizontalIcon}
                             size={16}
@@ -77,7 +60,8 @@ export default function AtaMangaOptionMenu({ id, type }: OptionMenuProps) {
 
                 <DropdownMenuContent
                     className="w-56 bg-[--clr-surface-a20]/20 backdrop-blur-md rounded-lg"
-                    align="center">
+                    align="center"
+                >
                     <Item
                         className={ItemStyle}
                         label="Copy Title"
@@ -140,7 +124,7 @@ export default function AtaMangaOptionMenu({ id, type }: OptionMenuProps) {
                         icon={Edit02Icon}
                         action={(e) => {
                             e.preventDefault();
-                            setEditOpen(true);
+                            toggleSidebar();
                         }}
                     />
                     <Item
