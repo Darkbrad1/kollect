@@ -59,7 +59,7 @@ export default function AtaMangaOptionMenu({ id, type }: OptionMenuProps) {
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent
-                    className="w-56 bg-[--clr-surface-a20]/20 backdrop-blur-md rounded-lg"
+                    className="w-56 bg-[--clr-surface-a10] backdrop-blur-md rounded-lg"
                     align="center"
                 >
                     <Item
@@ -128,7 +128,7 @@ export default function AtaMangaOptionMenu({ id, type }: OptionMenuProps) {
                         }}
                     />
                     <Item
-                        className={ItemStyle}
+                        className="focus:bg-[--clr-danger-a0] focus:text-white"
                         label="Delete"
                         icon={Delete02Icon}
                         action={() => deleteManga({ id: manga._id })}

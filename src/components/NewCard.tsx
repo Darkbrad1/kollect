@@ -34,10 +34,9 @@ export default function Card({ id, image, chapter, title, url}: CardProps) {
     console.log(id);
     return (
         <a
-
             href={url}
             target="_blank"
-            className="bg-zinc-600 aspect-[1/1.5] h-[211px] rounded-lg overflow-hidden card-style shadow-md shadow-black/50">
+            className="bg-zinc-600 aspect-[1/1.5] h-[211px] rounded-lg overflow-hidden card-style shadow-md shadow-black/50 hover:scale-105">
             <Image src={image} />
             <div className="overlay p-3 flex flex-col justify-between ">
                 <div className="flex justify-between">
