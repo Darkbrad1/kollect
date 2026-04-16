@@ -12,7 +12,7 @@ import NavigationBar from "~/components/NavigationBar";
 import { convex } from "~/lib/convex";
 import { useConvexClerkAuth } from "~/lib/useConvexClerkAuth";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
-import { AppSidebar } from "~/components/app-sidebar";
+import { AppSidebar } from "~/components/AppSidebar";
 import "~/style.css";
 
 import SignIn from "~/components/SignIn";

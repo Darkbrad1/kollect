@@ -14,6 +14,9 @@ type AppState = {
     // Current page/section of the app (e.g., "reading", "planned")
     status: Status;
     setStatus: (v: Status) => void;
+
+    target: Id<"Manga"> | undefined;
+    setTarget: (target: Id<"Manga">) => void;
 };
 
 // Create the context with a default null value
@@ -29,6 +32,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     // State for tracking which status the user is on
     const [status, setStatus] = useState<Status>("reading");
 
+    const [target, setTarget] = useState<Id<"Manga">>();
 
     // Provide state values and their setters to all child components
     return (
@@ -40,6 +44,8 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
                 setSearch,
                 status,
                 setStatus,
+                target,
+                setTarget,
             }}>
             {children}
         </AppStateContext.Provider>
