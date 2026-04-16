@@ -27,7 +27,7 @@ export function AppSidebar() {
                 <SidebarTrigger />
             </SidebarHeader>
 
-            <SidebarContent className="px-4 gap-0">
+            <SidebarContent className="px-4 gap-0 custom-scroll">
                 {/* Cover Image */}
                 <SidebarGroup className="items-center py-4">
                     <div className="w-40 h-52 rounded-xl bg-[--clr-surface-a0]" />

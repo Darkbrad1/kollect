@@ -13,12 +13,12 @@ export default function RenderMangas() {
     const { view, status, search } = useAppState();
 
     const mangas = useQuery(api.manga.listManga);
-
+    // const mangas = undefined
     if (mangas === undefined) {
         return (
-            <div className="w-full flex flex-wrap gap-3 mx-auto">
-                {Array.from({ length: 10 }).map((_, i) => (
-                    <Skeleton key={i} className="aspect-[1/1.5] h-[218px]" />
+            <div className="w-full flex flex-wrap gap-3 mx-auto custom-scroll">
+                {Array.from({ length: 15 }).map((_, i) => (
+                    <Skeleton key={i} className="aspect-[1/1.5] h-[211px]" />
                 ))}
             </div>
         );
@@ -32,23 +32,10 @@ export default function RenderMangas() {
 
     const inputMangas = !search ? filteredMangas : searchedMangas;
 
-    // if (inputMangas.length === 0) {
-    //     return (
-    //         <div className="w-full h-full flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
-    //             <LibraryBig className="h-12 w-12" />
-    //             <p className="text-sm font-medium">No manga found</p>
-    //             <p className="text-xs">
-    //                 {search
-    //                     ? `No results for "${search}"`
-    //                     : "Nothing here yet. Add some manga to get started."}
-    //             </p>
-    //         </div>
-    //     );
-    // }
     return (
         <>
         <NoMangas mangas={inputMangas} />
-            <div className="w-full flex flex-wrap gap-3 mx-auto overflow-hidden">
+            <div className="w-full flex flex-wrap gap-3 mx-auto custom-scroll">
                 {inputMangas.map((data) => (
                     <Card
                         key={data._id}

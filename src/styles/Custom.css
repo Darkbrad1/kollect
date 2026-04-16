@@ -59,3 +59,12 @@
     }
 }
 
+.custom-scroll {
+    /* position: absolute; */
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-color: var(--clr-primary-a0) var(--clr-surface-a10);
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable both-edges;
+}

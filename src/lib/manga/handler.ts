@@ -98,7 +98,7 @@ export async function handleChapterUpdate(newData: Manga, token: string) {
 
   // If this manga is not known yet, create it immediately.
   if (!manga) {
-    await addManga(newData, token)
+    // await addManga(newData, token)
     return
   }
 
