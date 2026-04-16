@@ -2,7 +2,6 @@ import type { Manga } from "./types"
 
 import { isSameHostname } from "./parser"
 import { addManga, findExistingManga, updateManga } from "./repository"
-import { toast } from "sonner"
 
 // Handle a manual "add manga" action.
 //
@@ -95,6 +94,7 @@ export async function handleChapterUpdate(newData: Manga, token: string) {
   )
 
   console.log("Handling chapter update for manga:", manga)
+  console.log("newData:", newData)
 
   // If this manga is not known yet, create it immediately.
   if (!manga) {
@@ -105,14 +105,20 @@ export async function handleChapterUpdate(newData: Manga, token: string) {
   // Determine whether this update is a valid chapter advance.
   const sameSource = isSameHostname(newData.site_url, manga.site_url)
   const chapterIncreased = newData.chapter_number > manga.chapter_number
+  const chapterDelta = newData.chapter_number - manga.chapter_number
 
-  // Require that the user read enough of the previous chapter before auto-advancing.
-  const oldScrollPassedThreshold = manga.scroll_percentage > 50
+  // Allow the update if the user read enough of the previous chapter,
+  // or if they jumped ahead by more than one chapter intentionally.
+  const oldScrollPassedThreshold =
+    manga.scroll_percentage > 50 || chapterDelta > 1
 
   if (!chapterIncreased || !oldScrollPassedThreshold) return
 
   // If the user stayed on the same source/domain, update normally.
   if (sameSource) {
+    console.log(
+      "Chapter increased on the same source. Updating chapter number and resetting scroll."
+    )
     await updateManga(
       manga._id!,
       {
