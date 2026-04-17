@@ -3,8 +3,9 @@ import StatusTabs from "./NavigationBarStatusTabs";
 import { Settings01Icon } from "@hugeicons/core-free-icons";
 import { SidebarTrigger } from "~/components/ui/sidebar";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useClerk } from "@clerk/chrome-extension";
+import { useClerk, UserButton } from "@clerk/chrome-extension";
 import { useState } from "react";
+// import { UserButton } from "@clerk/chrome-extension";
 
 import {
     DropdownMenu,
@@ -34,43 +35,14 @@ export default function NavigationBar() {
         <div className="flex w-full justify-between">
             <Search />
             <StatusTabs />
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        className="custom-edge hover:bg-[--clr-surface-a20] bg-[--clr-surface-a10] h-12 aspect-square rounded-full hover:text-white"
-                    >
-                        <HugeiconsIcon icon={Settings01Icon} />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel>Settings</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <div className="flex items-center justify-between px-2 py-2">
-                        <Label htmlFor="dark-mode">Dark Mode</Label>
-                        <Switch
-                            id="dark-mode"
-                            checked={darkMode}
-                            onCheckedChange={handleDarkMode}
-                        />
-                    </div>
-                    <div className="flex items-center justify-between px-2 py-2">
-                        <Label htmlFor="progress-bar">Show Progress Bar</Label>
-                        <Switch
-                            id="progress-bar"
-                            checked={showProgressBar}
-                            onCheckedChange={setShowProgressBar}
-                        />
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        className="text-red-500 focus:text-red-500 cursor-pointer"
-                        onClick={() => signOut()}
-                    >
-                        Sign Out
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+            {/* <UserButton  /> */}
+            <UserButton
+                appearance={{
+                    elements: {
+                        avatarBox: "w-11 h-11", // or any size e.g. "w-12 h-12"
+                    },
+                }}
+            />
         </div>
     );
 }

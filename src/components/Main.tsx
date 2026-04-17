@@ -35,7 +35,7 @@ export default function RenderMangas() {
     return (
         <>
         <NoMangas mangas={inputMangas} />
-            <div className="w-full flex flex-wrap gap-3 mx-auto custom-scroll">
+            <div className="w-full flex flex-wrap gap-3 mx-auto custom-scroll py-1">
                 {inputMangas.map((data) => (
                     <Card
                         key={data._id}
