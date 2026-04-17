@@ -11,6 +11,7 @@ interface CardProps {
     chapter?: string;
     title?: string;
     url?: string;
+    percentage?: number;
 }
 function Image({ src }: { src?: string }) {
     return src ? (
@@ -29,12 +30,13 @@ function Image({ src }: { src?: string }) {
         </div>
     );
 }
-export default function Card({ id, image, chapter, title, url}: CardProps) {
-
-    console.log(id);
+export default function Card({ id, image, chapter, title, url, percentage}: CardProps) {
+        const href = url && percentage
+        ? `${url}#kollect-scroll=${percentage}`
+        : url;
     return (
         <a
-            href={url}
+            href={href}
             target="_blank"
             className="bg-zinc-600 aspect-[1/1.5] h-[211px] rounded-lg overflow-hidden card-style shadow-md shadow-black/50 hover:scale-105">
             <Image src={image} />

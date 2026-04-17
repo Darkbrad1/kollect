@@ -3,21 +3,10 @@ import type { PlasmoCSConfig } from "plasmo"
 import { sendAddManga } from "./utils/senders"
 import { registerWatchers } from "./utils/watchers"
 
-/**
- * Run this content script on all URLs.
- *
- * You can narrow this later if you only want supported manga sites.
- */
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"]
 }
 
-/**
- * Listen for messages from the background script.
- *
- * Right now this is used by the context menu item that manually adds
- * the currently open manga to the user's library.
- */
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message?.type === "add_manga") {
     void sendAddManga()
@@ -26,6 +15,31 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 })
 
 /**
- * Start all content-script watchers after the file loads.
+ * If the URL contains a kollect-scroll hash, scroll to that percentage
+ * once the page is fully loaded.
  */
+function restoreScrollPosition() {
+  const match = location.hash.match(/kollect-scroll=([\d.]+)/)
+  if (!match) return
+
+  const percentage = parseFloat(match[1])
+  if (isNaN(percentage)) return
+
+  const doScroll = () => {
+    // Wait for dynamic content to settle before calculating scroll height
+    setTimeout(() => {
+      const maxScroll =
+        document.documentElement.scrollHeight - window.innerHeight
+      window.scrollTo({ top: (percentage / 100) * maxScroll, behavior: "smooth" })
+    }, 1500)
+  }
+
+  if (document.readyState === "complete") {
+    doScroll()
+  } else {
+    window.addEventListener("load", doScroll, { once: true })
+  }
+}
+
+restoreScrollPosition()
 registerWatchers()

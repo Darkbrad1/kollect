@@ -45,7 +45,7 @@ export function AppSidebar() {
 
     const data = useQuery(
         api.manga.getMangaById,
-        target ? { id: target } : "skip"
+        target ? { id: target } : "skip",
     );
     const updateManga = useMutation(api.manga.updateManga);
 
@@ -72,8 +72,7 @@ export function AppSidebar() {
         const updates: UpdateMangaData = {};
 
         const nextTitle = selectedTitle;
-        if (nextTitle !== data.display_title)
-            updates.display_title = nextTitle;
+        if (nextTitle !== data.display_title) updates.display_title = nextTitle;
 
         const nextSite = selectedSite;
         if (nextSite !== data.site_url) updates.site_url = nextSite;
@@ -95,8 +94,7 @@ export function AppSidebar() {
                 updates.scroll_percentage = percentage;
         }
 
-        if (isStatus(status) && status !== data.status)
-            updates.status = status;
+        if (isStatus(status) && status !== data.status) updates.status = status;
 
         if (Object.keys(updates).length === 0) {
             setOpen(false);
@@ -235,6 +233,7 @@ export function AppSidebar() {
                                 type="number"
                                 min={0}
                                 max={100}
+                                step="any"
                                 defaultValue={data?.scroll_percentage}
                                 key={`percentage-${data?._id}`}
                                 className="h-12 rounded-full border-none bg-[--clr-surface-a0] px-5 !text-white"

@@ -44,6 +44,7 @@ export default function RenderMangas() {
                         image={data.cover_url}
                         chapter={`${data.chapter_number}`}
                         title={data.display_title}
+                        percentage={data.scroll_percentage}
                     />
                 ))}
             </div>
