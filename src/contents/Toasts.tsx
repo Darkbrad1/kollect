@@ -1,7 +1,5 @@
 import type { PlasmoCSConfig } from "plasmo"
-
 import { Toaster } from "~/components/ui/sonner"
-
 import { styles } from "./getStyle"
 
 export const getStyle = () => styles()

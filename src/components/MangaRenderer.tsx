@@ -1,9 +1,7 @@
 import { useUser } from "@clerk/clerk-react"
 import { useQuery } from "convex/react"
-
 import CardView from "~/components/CardView"
 import DetailedView from "~/components/DetailedView"
-
 import { api } from "../../convex/_generated/api"
 import { useAppState } from "./AppStateProvider"
 
@@ -44,7 +42,6 @@ export default function MangaRenderer() {
     // Return the selected view component
     return displayView
   }
-
   // Render the chosen view
   return <>{renderView()}</>
 }

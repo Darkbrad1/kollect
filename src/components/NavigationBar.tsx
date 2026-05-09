@@ -35,7 +35,6 @@ export default function NavigationBar() {
         <div className="flex w-full justify-between">
             <Search />
             <StatusTabs />
-            {/* <UserButton  /> */}
             <UserButton
                 appearance={{
                     elements: {

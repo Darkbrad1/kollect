@@ -2,6 +2,8 @@ import { Button } from "~/components/ui/button"
 import AppPreview from "~assets/appPreview.png"
 import kollectLogo from "~assets/kollect.png"
 
+// import AppPreview from '../../assets/appPreview.png'
+
 function openSignInPage() {
   chrome.tabs.create({
     url: chrome.runtime.getURL("tabs/auth.html?mode=sign-in")

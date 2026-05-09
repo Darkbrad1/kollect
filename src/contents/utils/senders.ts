@@ -15,9 +15,7 @@ import { getScrollPercentage } from "./scroll"
  */
 export async function sendProgress(force = false) {
   const scroll = getScrollPercentage()
-
   if (!force && Math.abs(scroll - contentState.lastSentScroll) < 1) return
-
   contentState.lastSentScroll = scroll
 
   // Build manga data directly from the current page.
@@ -39,7 +37,6 @@ export async function sendProgress(force = false) {
 export async function sendChapterChange() {
   // Update our local URL tracker first so repeated checks do not resend.
   contentState.currentUrl = location.href
-
   // Reset scroll tracking because this is a fresh chapter/page context.
   contentState.lastSentScroll = -1
 
@@ -62,7 +59,6 @@ export async function sendChapterChange() {
  */
 export async function sendAddManga() {
   const manga = buildMangaDataFromDocument(location.href, getScrollPercentage())
-
   const result = await sendToBackground({
     name: "addManga",
     body: { manga }

@@ -1,33 +1,42 @@
 const MENU_ID = "add-manga"
 
-// Create the context menu item when the extension is installed or updated.
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: MENU_ID,
-    title: "Add manga",
-    contexts: [
-      "page",
-      "selection",
-      "link",
-      "image",
-      "video",
-      "audio",
-      "editable"
-    ]
-  })
+  try {
+    chrome.contextMenus.create(
+      {
+        id: MENU_ID,
+        title: "Add manga",
+        contexts: ["page", "selection", "link", "image", "video", "audio"]
+      },
+      () => {
+        if (chrome.runtime.lastError) {
+          console.error(
+            "contextMenus.create failed:",
+            chrome.runtime.lastError.message
+          )
+        }
+      }
+    )
+  } catch (error) {
+    console.error("Failed to create context menu:", error)
+  }
 })
 
-// Listen for clicks on extension context menu items.
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  // Ignore clicks for any menu item except our "Add manga" action.
   if (info.menuItemId !== MENU_ID) return
-
-  // We need a valid tab ID to send a message to the content script.
   if (!tab?.id) return
 
-  // Tell the content script in the current tab to add the manga
-  // currently visible on the page.
-  chrome.tabs.sendMessage(tab.id, {
-    type: "add_manga"
+  chrome.tabs.sendMessage(tab.id, { type: "add_manga" }, () => {
+    if (chrome.runtime.lastError) {
+      console.error(
+        "tabs.sendMessage failed:",
+        chrome.runtime.lastError.message
+      )
+    }
   })
 })
+
+export async function getStoredClerkToken(): Promise<string | null> {
+  const result = await chrome.storage.local.get("clerk_token")
+  return result.clerk_token ?? null
+}

@@ -110,7 +110,7 @@ export async function handleChapterUpdate(newData: Manga, token: string) {
   // Allow the update if the user read enough of the previous chapter,
   // or if they jumped ahead by more than one chapter intentionally.
   const oldScrollPassedThreshold =
-    manga.scroll_percentage > 50 || chapterDelta > 1
+    manga.scroll_percentage > 0 || chapterDelta > 1
 
   if (!chapterIncreased || !oldScrollPassedThreshold) return
 

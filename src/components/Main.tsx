@@ -2,16 +2,14 @@ import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
 import Card from "./NewCard";
 
-import CardView from "~/components/CardView";
-import DetailedView from "~/components/DetailedView";
+
 import NoMangas from "./NoMangas";
 import { useAppState } from "./AppStateProvider";
 import { Skeleton } from "./ui/skeleton";
-import { LibraryBig } from "lucide-react"; // or any icon you prefer
+
 
 export default function RenderMangas() {
     const { view, status, search } = useAppState();
-
     const mangas = useQuery(api.manga.listManga);
     // const mangas = undefined
     if (mangas === undefined) {
