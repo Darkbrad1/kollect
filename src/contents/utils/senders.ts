@@ -45,10 +45,15 @@ export async function sendChapterChange() {
     getScrollPercentage()
   )
 
-  await sendToBackground({
+  const result = await sendToBackground({
     name: "updateChapter",
     body: { manga }
   })
+  if (!result){
+    toast.error(`Something went wrong while updating to chpater ${manga.chapter_number}`)
+  }else{
+    toast.success(`upated ${manga.display_title} to chapter ${manga.chapter_number}`)
+  }
 }
 
 /**

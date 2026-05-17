@@ -8,7 +8,7 @@ export const config: PlasmoCSConfig = {
 }
 
 const PlasmoOverlay = () => {
-  return <Toaster position="bottom-right" />
+  return <Toaster position="bottom-right" duration={1500} />
 }
 
 export default PlasmoOverlay
