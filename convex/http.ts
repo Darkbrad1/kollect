@@ -1,6 +1,8 @@
 // convex/http.ts
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
+import { internal } from "./_generated/api";
+import { Webhook } from "svix";
 
 const http = httpRouter();
 
@@ -50,5 +52,39 @@ http.route({
         });
     }),
 });
+
+
+http.route({
+    path: "/clerk-webhook",
+    method: "POST",
+    handler: httpAction(async (ctx, request) => {
+        const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
+        if (!webhookSecret) throw new Error("Missing CLERK_WEBHOOK_SECRET");
+
+        const body = await request.text();
+
+        const wh = new Webhook(webhookSecret);
+        let evt: any;
+
+        try {
+            evt = wh.verify(body, {
+                "svix-id": request.headers.get("svix-id")!,
+                "svix-timestamp": request.headers.get("svix-timestamp")!,
+                "svix-signature": request.headers.get("svix-signature")!,
+            });
+        } catch {
+            return new Response("Invalid webhook signature", { status: 400 });
+        }
+
+        if (evt.type === "user.created") {
+            await ctx.runMutation(internal.users.createUser, {
+                clerkId: evt.data.id,
+            });
+        }
+
+        return new Response(null, { status: 200 });
+    }),
+});
+
 
 export default http;

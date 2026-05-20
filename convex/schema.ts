@@ -1,26 +1,47 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+
 export default defineSchema({
-    Manga: defineTable({
-        user_id: v.string(),
-        display_title: v.string(),
-        cover_url: v.string(),
-        alternative_titles: v.array(v.string()),
-        chapter_number: v.float64(),
-        last_read_timeStamp: v.number(),
-        scroll_percentage: v.float64(),
+    users: defineTable({
+        clerkId: v.string(),
+    }).index("by_clerkId", ["clerkId"]),
+
+    userMangas: defineTable({
+        userId: v.id("users"),
+        mangaId: v.id("mangas"),
+        displayTitle: v.string(),
+        chapterNumber: v.float64(),
+        lastReadAt: v.number(),
+        scrollPercentage: v.float64(),
         status: v.union(
             v.literal("reading"),
             v.literal("planned"),
             v.literal("hiatus"),
             v.literal("archived"),
         ),
-        site_name: v.string(),
-        site_url: v.string(),
-        alternative_sites: v.array(v.string()),
-        mangadex_id: v.string(),
-    })
-        .index("by_user_id", ["user_id"])
-        .index("by_user_and_title", ["user_id", "display_title"]),
+    }).index("by_userId", ["userId"]),
+
+    userMangaSites: defineTable({
+        userMangaId: v.id("userMangas"),
+        siteId: v.id("sites"),
+        siteChapterUrl: v.string(),
+        current: v.boolean()
+    }).index("by_userMangaId", ["userMangaId"]),
+
+    sites: defineTable({
+        siteDomainName: v.string(),
+        siteLogo: v.string(),
+    }).index("by_siteDomainName", ["siteDomainName"]),
+
+    mangas: defineTable({
+        coverUrl: v.string(),
+        mangadexId: v.string(),
+        latestChapter: v.float64()
+    }),
+
+    mangaTitles: defineTable({
+        mangaId: v.id("mangas"),
+        title: v.string(),
+    }).index("by_mangaId", ["mangaId"]),
 });

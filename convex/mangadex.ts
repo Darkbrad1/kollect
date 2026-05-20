@@ -7,6 +7,7 @@ type MangaDexManga = {
     attributes: {
         title: Record<string, string>;
         altTitles: Record<string, string>[];
+        latestUploadedChapter: string | null;
     };
     relationships: {
         id: string;
@@ -17,39 +18,65 @@ type MangaDexManga = {
     }[];
 };
 
+type MangaDexChapter = {
+    attributes: {
+        chapter: string | null;
+        title: string | null;
+        translatedLanguage: string;
+        publishAt: string;
+        externalUrl: string | null;
+    };
+};
+
 export const searchMangaByTitle = action({
     args: { title: v.string() },
     handler: async (_, { title }) => {
         const res = await fetch(
             `https://api.mangadex.org/manga?title=${encodeURIComponent(
                 title
-            )}&includes[]=cover_art`
+            )}&includes[]=cover_art&limit=1`
         );
 
         const json = await res.json();
+        const manga: MangaDexManga = json.data[0];
 
-        return json.data.map((manga: MangaDexManga) => {
-            const cover = manga.relationships.find(
-                (rel) => rel.type === "cover_art"
+        if (!manga) return null;
+
+        const cover = manga.relationships.find(
+            (rel) => rel.type === "cover_art"
+        );
+        const coverFileName = cover?.attributes?.fileName;
+
+        let latestChapter = null;
+        if (manga.attributes.latestUploadedChapter) {
+            const chapterRes = await fetch(
+                `https://api.mangadex.org/chapter/${manga.attributes.latestUploadedChapter}`
             );
+            const chapterJson = await chapterRes.json();
+            const ch: MangaDexChapter = chapterJson.data;
 
-            const coverFileName = cover?.attributes?.fileName;
-
-            return {
-                id: manga.id,
-
-                title:
-                    manga.attributes.title.en ??
-                    Object.values(manga.attributes.title)[0],
-
-                alternative_titles: manga.attributes.altTitles.flatMap((alt) =>
-                    Object.values(alt)
-                ),
-
-                cover_url: coverFileName
-                    ? `https://uploads.mangadex.org/covers/${manga.id}/${coverFileName}`
-                    : null,
+            latestChapter = {
+                id: manga.attributes.latestUploadedChapter,
+                chapter: ch.attributes.chapter,
+                title: ch.attributes.title,
+                language: ch.attributes.translatedLanguage,
+                publishedAt: ch.attributes.publishAt,
+                externalUrl: ch.attributes.externalUrl,
             };
-        });
+        }
+
+        return {
+            id: manga.id,
+            title:
+                manga.attributes.title.en ??
+                Object.values(manga.attributes.title)[0],
+            alternativeTitles: manga.attributes.altTitles.flatMap((alt) =>
+                Object.values(alt)
+            ),
+            coverUrl: coverFileName
+                ? `https://uploads.mangadex.org/covers/${manga.id}/${coverFileName}`
+                : null,
+            latestChapter: latestChapter,
+        };
     },
 });
