@@ -119,47 +119,50 @@ export const listManga = query({
     args: {},
     handler: async (ctx) => {
         const user = await requireUser(ctx);
-        console.log("User ID:", user._id);
+
         const userMangas = await ctx.db
             .query("userMangas")
             .withIndex("by_userId", (q) => q.eq("userId", user._id))
             .collect();
+
         return await Promise.all(
             userMangas.map(async (userManga) => {
-                const manga = await ctx.db.get(userManga.mangaId);
-                const mangaTitles = (
-                    await ctx.db
+                const [manga, userSites] = await Promise.all([
+                    ctx.db.get(userManga.mangaId),
+                    ctx.db
+                        .query("userMangaSites")
+                        .withIndex("by_userMangaId", (q) =>
+                            q.eq("userMangaId", userManga._id),
+                        )
+                        .collect(),
+                ]);
+                const [mangaTitles, currentSite] = await Promise.all([
+                    ctx.db
                         .query("mangaTitles")
                         .withIndex("by_mangaId", (q) =>
                             q.eq("mangaId", manga._id),
                         )
-                        .collect()
-                ).map((title) => title.title);
-                const userSites = await ctx.db
-                    .query("userMangaSites")
-                    .withIndex("by_userMangaId", (q) =>
-                        q.eq("userMangaId", userManga._id),
-                    )
-                    .collect();
-                const currentUserSite = userSites.find((site) => site.current);
-                const userAltSites = userSites.map(
-                    (site) => site.siteChapterUrl,
-                );
-                const site = await ctx.db.get(currentUserSite.siteId);
+                        .collect(),
+                    ctx.db.get(
+                        userSites.find((s) => s.current)?.siteId,
+                    ),
+                ]);
+                const currentUserSite = userSites.find((s) => s.current);
+
                 return {
                     id: userManga._id,
                     MangaDexId: manga.mangadexId,
                     coverImage: manga.coverUrl,
                     title: userManga.displayTitle,
-                    altTitles: mangaTitles,
+                    altTitles: mangaTitles.map((t) => t.title),
                     currentChapter: userManga.chapterNumber,
                     latestChapter: manga.latestChapter,
                     lastReadAt: userManga.lastReadAt,
                     status: userManga.status,
                     scroll: userManga.scrollPercentage,
-                    DomainName: site.siteDomainName,
+                    DomainName: currentSite.domainName,
                     url: currentUserSite.siteChapterUrl,
-                    altUrl: userAltSites,
+                    altUrl: userSites.map((s) => s.siteChapterUrl),
                 };
             }),
         );
@@ -205,7 +208,7 @@ export const getManga = query({
             lastReadAt: userManga.lastReadAt,
             status: userManga.status,
             scroll: userManga.scrollPercentage,
-            DomainName: site.siteDomainName,
+            domainName: site.domainName,
             url: currentUserSite.siteChapterUrl,
             altUrl: userAltSites,
         };

@@ -51,7 +51,9 @@ export default function Popup() {
     return (
         <ClerkProvider
             publishableKey={publishableKey}
-            afterSignOutUrl="/popup.html">
+            allowedRedirectOrigins={[`chrome-extension://${chrome.runtime.id}`]}
+            afterSignOutUrl="/popup.html"
+            >
             <ClerkTokenSync />
             <ConvexProviderWithAuth
                 client={convex}

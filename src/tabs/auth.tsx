@@ -19,17 +19,12 @@ export default function AuthPage() {
 
   return (
     <ClerkProvider
-      publishableKey={PUBLISHABLE_KEY}
-      afterSignOutUrl={`${EXTENSION_URL}tabs/auth.html`}
-      signInFallbackRedirectUrl={`${EXTENSION_URL}tabs/auth.html`}
-      signUpFallbackRedirectUrl={`${EXTENSION_URL}tabs/auth.html`}>
+      publishableKey={PUBLISHABLE_KEY}>
       <div className="grid place-content-center min-h-screen">
         {mode === "sign-in" ? (
-          <SignIn
-            routing="hash"
-          />
+          <SignIn/>
         ) : (
-          <SignUp routing="hash" />
+          <SignUp/>
         )}
       </div>
     </ClerkProvider>

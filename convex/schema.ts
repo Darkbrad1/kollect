@@ -30,9 +30,9 @@ export default defineSchema({
     }).index("by_userMangaId", ["userMangaId"]),
 
     sites: defineTable({
-        siteDomainName: v.string(),
-        siteLogo: v.string(),
-    }).index("by_siteDomainName", ["siteDomainName"]),
+        domainName: v.string(),
+        logo: v.string(),
+    }).index("by_domainName", ["domainName"]),
 
     mangas: defineTable({
         coverUrl: v.string(),
