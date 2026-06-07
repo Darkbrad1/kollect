@@ -10,10 +10,10 @@ export default defineSchema({
     userMangas: defineTable({
         userId: v.id("users"),
         mangaId: v.id("mangas"),
-        displayTitle: v.string(),
-        chapterNumber: v.float64(),
+        title: v.string(),
+        currentChapter: v.float64(),
         lastReadAt: v.number(),
-        scrollPercentage: v.float64(),
+        scroll: v.float64(),
         status: v.union(
             v.literal("reading"),
             v.literal("planned"),
@@ -25,7 +25,7 @@ export default defineSchema({
     userMangaSites: defineTable({
         userMangaId: v.id("userMangas"),
         siteId: v.id("sites"),
-        siteChapterUrl: v.string(),
+        siteUrl: v.string(),
         current: v.boolean()
     }).index("by_userMangaId", ["userMangaId"]),
 

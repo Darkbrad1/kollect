@@ -26,13 +26,13 @@ import {
 import Item from "./MangaOptionMenuItem";
 
 type OptionMenuProps = {
-    id: Id<"Manga">;
+    id: Id<"userMangas">;
     type?: "ghost";
 };
 
-export default function AtaMangaOptionMenu({ id, type }: OptionMenuProps) {
+export default function MenuOptionTriggered({ id, type }: OptionMenuProps) {
     const { setTarget } = useAppState();
-    const manga = useQuery(api.manga.getMangaById, { id });
+    const manga = useQuery(api.manga.getManga , { id });
     const updateManga = useMutation(api.manga.updateManga);
     const deleteManga = useMutation(api.manga.deleteManga);
     const { toggleSidebar } = useSidebar();

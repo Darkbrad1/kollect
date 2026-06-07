@@ -14,7 +14,27 @@ export type Manga = {
     status: MangaStatus,
     domainName: string,
     url: string,
-  }
+}
+
+export type UserMangaPayload = {
+  id: Id<"userMangas">;
+  MangaDexId: string;
+  coverImage: string | null;
+
+  title: string;
+  altTitles: string[];
+
+  currentChapter: number;
+
+  lastReadAt: Date | null;
+  status: string;
+
+  scroll: number;
+
+  DomainName: string;
+  url: string;
+  altUrl: string[];
+};
 
 // export type PartialManga = {
 //   display_title?: string

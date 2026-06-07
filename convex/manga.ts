@@ -38,9 +38,7 @@ export const userMangaExist = query({
       .first();
   },
 });
-
 // ─── Returns UserManga based on a title────────────────────────────────────────
-
 export const findUserMangaByTitle = query({
   args: { title: v.string() },
   handler: async (ctx, args) => {
@@ -61,7 +59,7 @@ export const findUserMangaByTitle = query({
         .withIndex("by_mangaId", (q) => q.eq("mangaId", manga._id))
         .collect();
 
-      const matchesDisplay = userManga.displayTitle
+      const matchesDisplay = userManga.title
         .toLowerCase()
         .includes(searchTerm);
 
@@ -86,16 +84,16 @@ export const findUserMangaByTitle = query({
         id: userManga._id,
         MangaDexId: manga.mangadexId,
         coverImage: manga.coverUrl,
-        title: userManga.displayTitle,
+        title: userManga.title,
         altTitles: mangaTitles.map((t) => t.title),
-        currentChapter: userManga.chapterNumber,
+        currentChapter: userManga.currentChapter,
 
         lastReadAt: userManga.lastReadAt,
         status: userManga.status,
-        scroll: userManga.scrollPercentage,
+        scroll: userManga.scroll,
         DomainName: currentSite.domainName,
-        url: currentUserSite.siteChapterUrl,
-        altUrl: userSites.map((s) => s.siteChapterUrl),
+        url: currentUserSite.siteUrl,
+        altUrl: userSites.map((s) => s.siteUrl),
         
       };
     }
@@ -103,25 +101,8 @@ export const findUserMangaByTitle = query({
     return null;
   },
 });
-
-
-// export const insertManga = internalMutation({
-//   args: {
-//     mangadexId: v.string(),
-//     coverImage: v.string(),
-//     // latestChapter: v.number(),
-//   },
-//   handler: async (ctx, args) => {
-//     return await ctx.db.insert("mangas", {
-//       mangadexId: args.mangadexId,
-//       coverUrl: args.coverImage,
-//       // latestChapter: args.latestChapter,
-//     });
-//   },
-// });
-
 // ─── Create Manga ─────────────────────────────────────────────────────────────
-export const createManga = action({
+export const addManga = action({
   args: {
     title: v.string(),
     currentChapter: v.float64(),
@@ -136,7 +117,7 @@ export const createManga = action({
       { title: args.title },
     );
 
-    return await ctx.runMutation(internal.manga.insertManga, {
+    return await ctx.runMutation(internal.manga.createManga, {
       mangadexId: dexResults?.id,
       coverImage: dexResults?.coverUrl,
       title: args.title,
@@ -149,12 +130,11 @@ export const createManga = action({
     });
   },
 });
-
 // ─── Insert Manga ─────────────────────────────────────────────────────────────
-export const insertManga = internalMutation({
+export const createManga = internalMutation({
   args: {
-    mangadexId: v.string(),
-    coverImage: v.string(),
+    mangadexId: v.optional(v.string()),
+    coverImage: v.optional(v.string()),
     title: v.string(),
     currentChapter: v.float64(),
     lastReadAt: v.number(),
@@ -168,8 +148,8 @@ export const insertManga = internalMutation({
 
     // 1. Insert into mangas
     const mangaId = await ctx.db.insert("mangas", {
-      mangadexId: args.mangadexId,
-      coverUrl: args.coverImage,
+      mangadexId: args.mangadexId || "",
+      coverUrl: args.coverImage || "",
     });
 
     // 2. Insert into mangaTitles
@@ -182,10 +162,10 @@ export const insertManga = internalMutation({
     const userMangaId = await ctx.db.insert("userMangas", {
       userId: user._id,
       mangaId,
-      displayTitle: args.title,
-      chapterNumber: args.currentChapter,
+      title: args.title,
+      currentChapter: args.currentChapter,
       lastReadAt: args.lastReadAt,
-      scrollPercentage: args.scroll,
+      scroll: args.scroll,
       status: args.status,
     });
 
@@ -207,24 +187,24 @@ export const insertManga = internalMutation({
     await ctx.db.insert("userMangaSites", {
       userMangaId,
       siteId: site!._id,
-      siteChapterUrl: args.url,
+      siteUrl: args.url,
       current: true,
     });
 
     return userMangaId;
   },
 });
-
 // ─── Update Manga ────────────────────────────────────────────────────────────
-
 export const updateManga = mutation({
   args: {
     id: v.id("userMangas"),
     data: v.object({
-      displayTitle: v.optional(v.string()),
-      chapterNumber: v.optional(v.float64()),
+      title: v.optional(v.string()),
+      currentChapter: v.optional(v.float64()),
       lastReadAt: v.optional(v.number()),
-      scrollPercentage: v.optional(v.float64()),
+      domainName: v.optional(v.string()),
+      url: v.optional(v.string()),
+      scroll: v.optional(v.float64()),
       status: v.optional(statusValidator),
     }),
   },
@@ -235,13 +215,20 @@ export const updateManga = mutation({
     if (!userManga || userManga.userId !== user._id) {
       throw new Error("Not found or unauthorized");
     }
-    await ctx.db.patch(id, data);
+    await ctx.db.patch(
+      id,
+      {
+        title: data.title,
+        currentChapter: data.currentChapter,
+        lastReadAt: data.lastReadAt,
+        scroll: data.scroll,
+        status: "planned",
+      }
+    );
     return id;
   },
 });
-
 // ─── Delete Manga ─────────────────────────────────────────────────────────────
-
 export const deleteManga = mutation({
   args: { id: v.id("userMangas") },
   handler: async (ctx, { id }) => {
@@ -254,7 +241,6 @@ export const deleteManga = mutation({
     return id;
   },
 });
-
 // ─── List Manga ───────────────────────────────────────────────────────────────
 export const listManga = query({
   args: {},
@@ -290,23 +276,21 @@ export const listManga = query({
           id: userManga._id,
           MangaDexId: manga.mangadexId,
           coverImage: manga.coverUrl,
-          title: userManga.displayTitle,
+          title: userManga.title,
           altTitles: mangaTitles.map((t) => t.title),
-          currentChapter: userManga.chapterNumber,
+          currentChapter: userManga.currentChapter,
           lastReadAt: userManga.lastReadAt,
           status: userManga.status,
-          scroll: userManga.scrollPercentage,
+          scroll: userManga.scroll,
           DomainName: currentSite.domainName,
-          url: currentUserSite.siteChapterUrl,
-          altUrl: userSites.map((s) => s.siteChapterUrl),
+          url: currentUserSite.siteUrl,
+          altUrl: userSites.map((site) => site.siteUrl),
         };
       }),
     );
   },
 });
-
 // ─── Get Manga ────────────────────────────────────────────────────────────────
-
 export const getManga = query({
   args: {
     id: v.id("userMangas"),
@@ -329,21 +313,21 @@ export const getManga = query({
       .withIndex("by_userMangaId", (q) => q.eq("userMangaId", userManga._id))
       .collect();
     const currentUserSite = userSites.find((site) => site.current);
-    const userAltSites = userSites.map((site) => site.siteChapterUrl);
+    const userAltSites = userSites.map((site) => site.siteUrl);
     const site = await ctx.db.get("sites", currentUserSite.siteId);
     return {
       id: userManga._id,
       coverImage: manga.coverUrl,
       MangaDexId: manga.mangadexId,
 
-      title: userManga.displayTitle,
+      title: userManga.title,
       altTitles: mangaTitles,
-      currentChapter: userManga.chapterNumber,
+      currentChapter: userManga.currentChapter,
       lastReadAt: userManga.lastReadAt,
-      scroll: userManga.scrollPercentage,
+      scroll: userManga.scroll,
       status: userManga.status,
       domainName: site.domainName,
-      url: currentUserSite.siteChapterUrl,
+      url: currentUserSite.siteUrl,
       altUrl: userAltSites,
     };
   },

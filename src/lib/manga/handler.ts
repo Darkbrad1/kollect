@@ -3,36 +3,87 @@ import type { Manga } from "./types";
 import { isSameHostname } from "./parser";
 import { addManga, DoesMangaExist, updateManga } from "./repository";
 
-// Handle a manual "add manga" action.
+// Handle a manual "add existingData" action.
 //
-// If the manga already exists, merge the new information into the existing record.
-// Otherwise create a fresh manga entry.
-export async function handleAddManga(newData: Manga) {
-  const existing = await DoesMangaExist(newData.title);
+// If the existingData already exists, merge the new information into the existing record.
+// Otherwise create a fresh existingData entry.
+export async function handleAddManga(manga: Manga) {
+  const existing = await DoesMangaExist(manga.title);
   // If we already know this manga, merge useful fields instead of duplicating it.
   if (existing) {
-    console.log("manga exists")
+    console.log("manga exists");
     await updateManga(existing.id!, {
       // Update the read timestamp to mark this manga as recently accessed.
       lastReadAt: Date.now(),
       // Never reduce recorded progress/chapter when manually adding.
-      scroll: Math.max(existing.scroll, newData.scroll),
-      currentChapter: Math.max(existing.currentChapter, newData.currentChapter),
+      scroll: Math.max(existing.scroll, manga.scroll),
+      currentChapter: Math.max(existing.currentChapter, manga.currentChapter),
 
       // Use the latest source as the active one.
-      domainName: newData.domainName,
-      url: newData.url,
+      domainName: manga.domainName,
+      url: manga.url,
     });
 
     return;
-  } else { 
-    console.log("manga doen't exists") 
+  } else {
+    console.log("manga doen't exists");
   }
 
   // Otherwise create a brand-new manga entry.
-  return await addManga(newData);
+  return await addManga(manga);
 }
-export async function handleProgressUpdate() { }
-export async function handleChapterUpdate() { }
+
+// Handle scroll/progress updates from the reader page.
+export async function handleProgressUpdate(newData: Manga) {
+  const existingData = await DoesMangaExist(newData.title);
+  // If no matching existingData exists, there is nothing to update.
+  if (!existingData) return console.log("No manga found")
+
+  // Only update progress if we are still on the same chapter.
+  if (newData.currentChapter !== existingData.currentChapter) return console.log(`${newData.currentChapter} is not the same as ${existingData.currentChapter}`);
+
+  // Never overwrite with a lower scroll value.
+  if (newData.scroll < existingData.scroll) return console.log("lower scroll percentage");
+
+  
+
+  return await updateManga(
+    existingData.id,
+    {
+      scroll: newData.scroll,
+      lastReadAt: Date.now(),
+    },
+  );
+}
 
 
+
+
+
+
+
+
+export async function handleChapterUpdate(newData: Manga) {
+  const existingData = await DoesMangaExist(newData.title);
+  if (!existingData) {
+    console.log("manga does not exist -", newData.title);
+    return;
+  }
+
+  const chapterDelta = newData.currentChapter - existingData.currentChapter;
+  const chapterIncreased = chapterDelta > 0;
+  const scrollPassedThreshold = existingData.scroll > 0 || chapterDelta > 1;
+  
+  if (!chapterIncreased) return console.log("chapter didn't increase")
+  if (!scrollPassedThreshold) return console.log("Didn't reach the threshold for the manga to update");
+
+  // console.log("newData =", newData)
+  return await updateManga(existingData.id!, {
+    title: newData.title,
+    currentChapter: newData.currentChapter,
+    lastReadAt: Date.now(),
+    scroll: newData.scroll,
+    domainName: newData.domainName,
+    url: newData.url,
+  });
+}

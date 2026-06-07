@@ -5,13 +5,13 @@ export const seedTestData = mutation({
     handler: async (ctx) => {
         // Sites
         const site1Id = await ctx.db.insert("sites", {
-            siteDomainName: "mangadex.org",
-            siteLogo: "https://mangadex.org/favicon.ico",
+            domainName: "mangadex.org",
+            logo: "https://mangadex.org/favicon.ico",
         });
 
         const site2Id = await ctx.db.insert("sites", {
-            siteDomainName: "mangaplus.shueisha.co.jp",
-            siteLogo: "https://mangaplus.shueisha.co.jp/favicon.ico",
+            domainName: "mangaplus.shueisha.co.jp",
+            logo: "https://mangaplus.shueisha.co.jp/favicon.ico",
         });
 
         // Mangas

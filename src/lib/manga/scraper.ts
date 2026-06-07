@@ -26,20 +26,20 @@ export function buildMangaDataFromDocument(
     ogTitle,
     selectedOptions
   )
-  console.log(
-    "title: ",
-    normalizedTitle,
-    "chapter: ",
-    chapterNumber,
-    "lastReadAt: ",
-    Date.now(),
-    "scroll: ",
-    scroll,
-    "domain Name: ",
-    getHostname(url),
-    "url: ",
-    url,
-  )
+  // console.log(
+  //   "title: ",
+  //   normalizedTitle,
+  //   "chapter: ",
+  //   chapterNumber,
+  //   "lastReadAt: ",
+  //   Date.now(),
+  //   "scroll: ",
+  //   scroll,
+  //   "domain Name: ",
+  //   getHostname(url),
+  //   "url: ",
+  //   url,
+  // )
   
   return {
     title: normalizedTitle,

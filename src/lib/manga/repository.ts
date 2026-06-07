@@ -3,7 +3,7 @@ import type { Id } from "convex/_generated/dataModel";
 import { createAuthedConvexClient } from "~/lib/convexHttp";
 
 
-import type { Manga } from "./types";
+import type { Manga, UserMangaPayload } from "./types";
 async function getConvex() {
   const { clerk_token } = await chrome.storage.local.get("clerk_token");
   if (!clerk_token) throw new Error("No auth token found");
@@ -19,7 +19,7 @@ export async function fetchMangas() {
   return await convex.query(api.manga.listManga);
 }
 
-export async function DoesMangaExist(title: string) {
+export async function DoesMangaExist(title: string): Promise<UserMangaPayload> {
   const convex = await getConvex();
   console.log("checking does Manga Exist ...")
   return await convex.query(api.manga.findUserMangaByTitle, { title });
@@ -34,6 +34,6 @@ export async function updateManga(id: Id<"userMangas">, data: Partial<Manga>) {
 export async function addManga(data: Partial<Manga>) {
   const convex = await getConvex();
   console.log("Running Add Manga ...")
-  return await convex.action(api.manga.createManga, data)
+  return await convex.action(api.manga.addManga, data)
 
 };

@@ -1,7 +1,7 @@
 import type { PlasmoCSConfig } from "plasmo"
 
 import { sendAddManga } from "./utils/senders"
-// import { registerWatchers } from "./utils/watchers"
+import { registerWatchers } from "./utils/watchers"
 
 // Configure this file as a Plasmo content script that runs on all URLs
 export const config: PlasmoCSConfig = {
@@ -12,7 +12,6 @@ export const config: PlasmoCSConfig = {
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   // If the message tells this page to add manga, trigger that action
   if (message?.type === "add_manga") {
-    console.log(`step 1 - sendAddManga`)
     void sendAddManga()
 
     // Respond to confirm the message was received successfully
@@ -66,4 +65,4 @@ function restoreScrollPosition() {
 restoreScrollPosition()
 
 // Start any DOM watchers or observers used by the extension
-// registerWatchers()
+registerWatchers()
