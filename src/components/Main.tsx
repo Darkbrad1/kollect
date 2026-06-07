@@ -23,7 +23,7 @@ export default function RenderMangas() {
     }
 
     const searchedMangas = mangas.filter((manga) =>
-        manga.display_title.toLowerCase().includes(search.toLowerCase()),
+        manga.title.toLowerCase().includes(search.toLowerCase()),
     );
 
     const filteredMangas = mangas.filter((manga) => manga.status === status);
@@ -36,13 +36,13 @@ export default function RenderMangas() {
             <div className="w-full flex flex-wrap gap-3 mx-auto custom-scroll py-1">
                 {inputMangas.map((data) => (
                     <Card
-                        key={data._id}
-                        url={data.site_url}
-                        id={data._id}
-                        image={data.cover_url}
-                        chapter={`${data.chapter_number}`}
-                        title={data.display_title}
-                        percentage={data.scroll_percentage}
+                        key={data.id}
+                        url={data.url}
+                        id={data.id}
+                        image={data.coverImage}
+                        chapter={`${data.currentChapter}`}
+                        title={data.title}
+                        percentage={data.scroll}
                     />
                 ))}
             </div>

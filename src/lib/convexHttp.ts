@@ -1,5 +1,4 @@
 import { ConvexHttpClient } from "convex/browser"
-
 import { convexUrl } from "./convex"
 
 export function createAuthedConvexClient(token: string) {

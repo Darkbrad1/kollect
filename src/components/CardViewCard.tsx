@@ -30,7 +30,7 @@ function CardViewCard({ data }: DataProp) {
         <div className=" numberthing rounded-tl-lg [grid-area:manga] p-2 bg-black text-left font-black text-md justify-between items-center">
           {data.chapter_number}
         </div>
-        <MangaOptionMenu data={data} />
+        {/*<MangaOptionMenu data={data} />*/}
       </div>
 
       {/* Overlay displaying the current chapter number */}

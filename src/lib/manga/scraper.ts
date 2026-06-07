@@ -1,4 +1,4 @@
-import type { Manga } from "./types"
+// import type { Manga, user} from "./types"
 import { extractChapterNumber, getHostname, normalizeTitle } from "./parser"
 
 export function getSelectedOptions(
@@ -11,7 +11,7 @@ export function buildMangaDataFromDocument(
   url: string,
   scroll: number,
   doc: Document = document
-): Manga {
+) {
   const pageTitle = doc.title || ""
   const ogTitle =
     doc
@@ -26,18 +26,27 @@ export function buildMangaDataFromDocument(
     ogTitle,
     selectedOptions
   )
-
+  console.log(
+    "title: ",
+    normalizedTitle,
+    "chapter: ",
+    chapterNumber,
+    "lastReadAt: ",
+    Date.now(),
+    "scroll: ",
+    scroll,
+    "domain Name: ",
+    getHostname(url),
+    "url: ",
+    url,
+  )
+  
   return {
-    display_title: normalizedTitle,
-    cover_url: "",
-    alternative_titles: normalizedTitle ? [normalizedTitle] : [],
-    chapter_number: chapterNumber ?? 0,
-    last_read_timeStamp: Date.now(),
-    scroll_percentage: scroll,
-    status: "reading",
-    site_name: getHostname(url),
-    site_url: url,
-    alternative_sites: [url],
-    mangadex_id: ""
+    title: normalizedTitle,
+    currentChapter: chapterNumber ?? 0,
+    lastReadAt: Date.now(),
+    scroll: scroll,
+    domainName: getHostname(url),
+    url: url,
   }
 }

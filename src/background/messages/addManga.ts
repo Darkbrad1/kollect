@@ -1,15 +1,12 @@
-import { withAuth } from "~/background/withAuth"
+import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { handleAddManga } from "~/lib/manga/handler"
 
-// Background message handler for manually adding manga.
-//
-// The content script only sends { manga }.
-// The auth token is resolved here in the background layer
-// by the withAuth wrapper.
-export default withAuth(async (req, res, token) => {
+const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const { manga } = req.body
-
-  await handleAddManga(manga, token)
+  console.log('step 3 -', manga)
+  await handleAddManga(manga)
 
   res.send({ ok: true })
-})
+}
+
+export default handler

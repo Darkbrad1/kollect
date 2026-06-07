@@ -37,7 +37,6 @@ export default defineSchema({
     mangas: defineTable({
         coverUrl: v.string(),
         mangadexId: v.string(),
-        latestChapter: v.float64()
     }),
 
     mangaTitles: defineTable({

@@ -7,54 +7,7 @@ import { buildMangaDataFromDocument } from "~/lib/manga/scraper"
 import { contentState } from "../state"
 import { getScrollPercentage } from "./scroll"
 
-/**
- * Send a reading progress update to the background.
- *
- * If force is false, very small scroll changes under 1% are ignored
- * so we do not spam updates while the user is reading.
- */
-export async function sendProgress(force = false) {
-  const scroll = getScrollPercentage()
-  if (!force && Math.abs(scroll - contentState.lastSentScroll) < 1) return
-  contentState.lastSentScroll = scroll
 
-  // Build manga data directly from the current page.
-  const manga = buildMangaDataFromDocument(location.href, scroll)
-
-  // The background message handler is responsible for auth/server work.
-  await sendToBackground({
-    name: "updateProgress",
-    body: { manga }
-  })
-}
-
-/**
- * Send a chapter/page change update when the URL changes.
- *
- * This is especially useful for SPA-based manga sites where navigation
- * happens through history APIs instead of full page loads.
- */
-export async function sendChapterChange() {
-  // Update our local URL tracker first so repeated checks do not resend.
-  contentState.currentUrl = location.href
-  // Reset scroll tracking because this is a fresh chapter/page context.
-  contentState.lastSentScroll = -1
-
-  const manga = buildMangaDataFromDocument(
-    contentState.currentUrl,
-    getScrollPercentage()
-  )
-
-  const result = await sendToBackground({
-    name: "updateChapter",
-    body: { manga }
-  })
-  if (!result){
-    toast.error(`Something went wrong while updating to chpater ${manga.chapter_number}`)
-  }else{
-    toast.success(`upated ${manga.display_title} to chapter ${manga.chapter_number}`)
-  }
-}
 
 /**
  * Send a manual "add manga" request.
@@ -64,15 +17,17 @@ export async function sendChapterChange() {
  */
 export async function sendAddManga() {
   const manga = buildMangaDataFromDocument(location.href, getScrollPercentage())
+  console.log('step 2 -', manga)
+  // console.log(manga)
   const result = await sendToBackground({
     name: "addManga",
     body: { manga }
   })
   if (!result) {
-    toast.error(`Something went wrong while adding ${manga.display_title}`, {
+    toast.error(`Something went wrong while adding ${manga.title}`, {
       description: "check if the manga is already added"
     })
   } else {
-    toast.success(`${manga.display_title} was added successfully`)
+    toast.success(`${manga.title} was added successfully`)
   }
 }

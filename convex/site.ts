@@ -32,13 +32,13 @@ export const getCurrentSiteByUserMangaId = query({
 });
 
 export const getSiteByDomain = query({
-    args: { siteDomainName: v.string() },
-    handler: async (ctx, { siteDomainName }) => {
+    args: { domainName: v.string() },
+    handler: async (ctx, { domainName }) => {
         await requireUser(ctx);
         return await ctx.db
             .query("sites")
-            .withIndex("by_siteDomainName", (q) =>
-                q.eq("siteDomainName", siteDomainName),
+            .withIndex("by_domainName", (q) =>
+                q.eq("domainName", domainName),
             )
             .first();
     },
@@ -46,8 +46,8 @@ export const getSiteByDomain = query({
 
 export const createSite = mutation({
     args: {
-        siteDomainName: v.string(),
-        siteLogo: v.string(),
+        domainName: v.string(),
+        logo: v.string(),
     },
     handler: async (ctx, args) => {
         await requireUser(ctx);
@@ -152,20 +152,20 @@ export const deleteUserMangaSite = mutation({
 
 // findOrCreateSite
 export const findOrCreateSite = mutation({
-    args: { siteDomainName: v.string() },
-    handler: async (ctx, { siteDomainName }) => {
+    args: { domainName: v.string() },
+    handler: async (ctx, { domainName }) => {
         const existing = await ctx.db
             .query("sites")
-            .withIndex("by_siteDomainName", (q) =>
-                q.eq("siteDomainName", siteDomainName),
+            .withIndex("by_domainName", (q) =>
+                q.eq("domainName", domainName),
             )
             .unique();
 
         if (existing) return existing._id;
 
         return await ctx.db.insert("sites", {
-            siteDomainName,
-            siteLogo: "", // placeholder, update later if needed
+            domainName,
+            logo: "", // placeholder, update later if needed
         });
     },
 });

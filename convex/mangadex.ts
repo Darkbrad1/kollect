@@ -1,5 +1,5 @@
 // convex/mangadex.ts
-import { action } from "./_generated/server";
+import { action, internalAction } from "./_generated/server";
 import { v } from "convex/values";
 
 type MangaDexManga = {
@@ -28,7 +28,7 @@ type MangaDexChapter = {
     };
 };
 
-export const searchMangaByTitle = action({
+export const searchMangadexByTitle = internalAction({
     args: { title: v.string() },
     handler: async (_, { title }) => {
         const res = await fetch(
