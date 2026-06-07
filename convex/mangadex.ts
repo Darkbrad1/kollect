@@ -73,7 +73,7 @@ export const searchMangadexByTitle = internalAction({
             alternativeTitles: manga.attributes.altTitles.flatMap((alt) =>
                 Object.values(alt)
             ),
-            coverUrl: coverFileName
+            coverImage: coverFileName
                 ? `https://uploads.mangadex.org/covers/${manga.id}/${coverFileName}`
                 : null,
             latestChapter: latestChapter,

@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { requireUser } from "./auth";
 import { internalMutation, action } from "./_generated/server";
 import { internal } from "./_generated/api";
+import type { Id } from "./_generated/dataModel";
 
 import { searchMangadexByTitle } from "./mangadex";
 
@@ -14,7 +15,6 @@ const statusValidator = v.union(
 );
 
 // ─── Manga Exist (in mangas table by mangadexId) ─────────────────────────────
-
 export const mangaExist = query({
   args: { mangadexId: v.string() },
   handler: async (ctx, { mangadexId }) => {
@@ -24,9 +24,7 @@ export const mangaExist = query({
       .first();
   },
 });
-
 // ─── UserManga Exist (does this user already have this manga) ─────────────────
-
 export const userMangaExist = query({
   args: { mangaId: v.id("mangas") },
   handler: async (ctx, { mangaId }) => {
@@ -83,7 +81,7 @@ export const findUserMangaByTitle = query({
       return {
         id: userManga._id,
         MangaDexId: manga.mangadexId,
-        coverImage: manga.coverUrl,
+        coverImage: manga.coverImage,
         title: userManga.title,
         altTitles: mangaTitles.map((t) => t.title),
         currentChapter: userManga.currentChapter,
@@ -119,7 +117,7 @@ export const addManga = action({
 
     return await ctx.runMutation(internal.manga.createManga, {
       mangadexId: dexResults?.id,
-      coverImage: dexResults?.coverUrl,
+      coverImage: dexResults?.coverImage,
       title: args.title,
       currentChapter: args.currentChapter,
       lastReadAt: args.lastReadAt,
@@ -146,17 +144,43 @@ export const createManga = internalMutation({
   handler: async (ctx, args) => {
     const user = await requireUser(ctx);
 
-    // 1. Insert into mangas
-    const mangaId = await ctx.db.insert("mangas", {
-      mangadexId: args.mangadexId || "",
-      coverUrl: args.coverImage || "",
-    });
+    // 1. Find or insert manga
+    let mangaId: Id<"mangas">;
+    if (args.mangadexId) {
+      const existing = await ctx.db
+        .query("mangas")
+        .withIndex("by_mangadexId", (q) =>
+          q.eq("mangadexId", args.mangadexId!),
+        )
+        .first();
+    
+      mangaId = existing
+        ? existing._id
+        : await ctx.db.insert("mangas", {
+            mangadexId: args.mangadexId,
+            coverImage: args.coverImage || "",
+          });
+    } else {
+      mangaId = await ctx.db.insert("mangas", {
+        mangadexId: "",
+        coverImage: args.coverImage || "",
+      });
+    }
 
-    // 2. Insert into mangaTitles
-    await ctx.db.insert("mangaTitles", {
-      mangaId,
-      title: args.title,
-    });
+
+    // 2. Insert into mangaTitles (only if it doesn't exist)
+    const existingTitle = await ctx.db
+      .query("mangaTitles")
+      .withIndex("by_mangaId", (q) => q.eq("mangaId", mangaId))
+      .filter((q) => q.eq(q.field("title"), args.title))
+      .first();
+    
+    if (!existingTitle) {
+      await ctx.db.insert("mangaTitles", {
+        mangaId,
+        title: args.title,
+      });
+    }
 
     // 3. Insert into userMangas
     const userMangaId = await ctx.db.insert("userMangas", {
@@ -275,7 +299,7 @@ export const listManga = query({
         return {
           id: userManga._id,
           MangaDexId: manga.mangadexId,
-          coverImage: manga.coverUrl,
+          coverImage: manga.coverImage,
           title: userManga.title,
           altTitles: mangaTitles.map((t) => t.title),
           currentChapter: userManga.currentChapter,
@@ -317,7 +341,7 @@ export const getManga = query({
     const site = await ctx.db.get("sites", currentUserSite.siteId);
     return {
       id: userManga._id,
-      coverImage: manga.coverUrl,
+      coverImage: manga.coverImage,
       MangaDexId: manga.mangadexId,
 
       title: userManga.title,

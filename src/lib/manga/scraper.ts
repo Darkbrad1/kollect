@@ -1,52 +1,50 @@
 // import type { Manga, user} from "./types"
-import { extractChapterNumber, getHostname, normalizeTitle } from "./parser"
+import { extractChapterNumber, getHostname, normalizeTitle } from "./parser";
 
 export function getSelectedOptions(
-  doc: Document = document
+  doc: Document = document,
 ): HTMLOptionElement[] {
-  return Array.from(doc.querySelectorAll("select option:checked"))
+  return Array.from(doc.querySelectorAll("select option:checked"));
 }
 
 export function buildMangaDataFromDocument(
   url: string,
   scroll: number,
-  doc: Document = document
+  type: "all" | "progress" = "all",
+  doc: Document = document,
 ) {
-  const pageTitle = doc.title || ""
+  const pageTitle = doc.title || "";
   const ogTitle =
     doc
       .querySelector('meta[property="og:title"]')
       ?.getAttribute("content")
-      ?.trim() || ""
+      ?.trim() || "";
 
-  const selectedOptions = getSelectedOptions(doc)
-  const normalizedTitle = normalizeTitle(ogTitle || pageTitle)
+  const selectedOptions = getSelectedOptions(doc);
+  const normalizedTitle = normalizeTitle(ogTitle || pageTitle);
   const chapterNumber = extractChapterNumber(
     pageTitle,
     ogTitle,
-    selectedOptions
-  )
-  // console.log(
-  //   "title: ",
-  //   normalizedTitle,
-  //   "chapter: ",
-  //   chapterNumber,
-  //   "lastReadAt: ",
-  //   Date.now(),
-  //   "scroll: ",
-  //   scroll,
-  //   "domain Name: ",
-  //   getHostname(url),
-  //   "url: ",
-  //   url,
-  // )
-  
-  return {
-    title: normalizedTitle,
-    currentChapter: chapterNumber ?? 0,
-    lastReadAt: Date.now(),
-    scroll: scroll,
-    domainName: getHostname(url),
-    url: url,
+    selectedOptions,
+  );
+
+  if (type === "all") {
+    return {
+      title: normalizedTitle,
+      currentChapter: chapterNumber ?? 0,
+      lastReadAt: Date.now(),
+      scroll: scroll,
+      domainName: getHostname(url),
+      url: url,
+    };
+  }
+
+  if (type === "progress") {
+    return {
+      title: normalizedTitle,
+      currentChapter: chapterNumber ?? 0,
+      lastReadAt: Date.now(),
+      scroll: scroll,
+    };
   }
 }
