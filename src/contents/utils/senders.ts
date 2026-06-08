@@ -80,8 +80,8 @@ export async function sendChapterChange() {
     body: { manga }
   })
   if (!result){
-    // toast.error(`Something went wrong while updating to chpater ${manga.currentChapter}`)
+    toast.error(`Something went wrong while updating to chpater ${manga.currentChapter}`)
   }else{
-    // toast.success(`upated ${manga.title} to chapter ${manga.currentChapter}`)
+    toast.success(`upated ${manga.title} to chapter ${manga.currentChapter}`)
   }
 }

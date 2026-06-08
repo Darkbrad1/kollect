@@ -1,140 +1,133 @@
 import { api } from "convex/_generated/api";
+import type { UserMangaPayload, MangaStatus } from "~/lib/manga/types";
 import type { Id } from "convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
+import { toast } from "sonner";
 
 import { Button } from "~/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { useSidebar } from "~/components/ui/sidebar";
 
 import { useAppState } from "./AppStateProvider";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    Archive02Icon,
-    LibraryIcon,
-    BookBookmark02Icon,
-    BookOpen02Icon,
-    MoreHorizontalIcon,
-    ClipboardCopyIcon,
-    Link04Icon,
-    Edit02Icon,
-    Delete02Icon,
-} from "@hugeicons/core-free-icons";
+  Archive02Icon,
+  LibraryIcon,
+  BookBookmark02Icon,
+  BookOpen02Icon,
+  MoreHorizontalIcon,
+  ClipboardCopyIcon,
+  Link04Icon,
+  Edit02Icon,
+  Delete02Icon,
+} from '@hugeicons/core-free-icons';
 import Item from "./MangaOptionMenuItem";
+// import { toast } from "sonner";
 
 type OptionMenuProps = {
-    id: Id<"userMangas">;
-    type?: "ghost";
+  id: Id<"userMangas">;
+  type?: "ghost";
 };
 
 export default function MenuOptionTriggered({ id, type }: OptionMenuProps) {
-    const { setTarget } = useAppState();
-    const manga = useQuery(api.manga.getManga , { id });
-    const updateManga = useMutation(api.manga.updateManga);
-    const deleteManga = useMutation(api.manga.deleteManga);
-    const { toggleSidebar } = useSidebar();
+  const { setTarget } = useAppState();
+  const manga: UserMangaPayload = useQuery(api.manga.getManga, { id });
+  const updateManga = useMutation(api.manga.updateManga);
+  const deleteManga = useMutation(api.manga.deleteManga);
+  const { toggleSidebar } = useSidebar();
 
-    if (!manga) return null;
+  if (!manga) return null;
 
-    function copyValue(value: string) {
-        navigator.clipboard.writeText(value);
-    }
+  function copyValue(value: string, message?: string) {
+    navigator.clipboard.writeText(value);
+    toast.success(message);
+  }
 
-    const ItemStyle = "focus:bg-[--clr-primary-a10]";
+  function update(status: MangaStatus) {
+    updateManga({
+      id: manga.id,
+      data: { status: status },
+    });
+  }
 
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button className="rounded-full aspect-[1/1] h-6 p-1">
-                    <HugeiconsIcon
-                        icon={MoreHorizontalIcon}
-                        size={16}
-                        fill="white"
-                        color="currentColor"
-                        strokeWidth={1.5}
-                    />
-                </Button>
-            </DropdownMenuTrigger>
+  const ItemStyle = "focus:bg-[--clr-primary-a10]";
 
-            <DropdownMenuContent
-                className="w-56 bg-[--clr-surface-a10] backdrop-blur-md rounded-lg"
-                align="center">
-                <Item
-                    className={ItemStyle}
-                    label="Copy Title"
-                    icon={ClipboardCopyIcon}
-                    action={() => copyValue(manga.display_title)}
-                />
-                <Item
-                    className={ItemStyle}
-                    label="Copy Link"
-                    icon={Link04Icon}
-                    action={() => copyValue(manga.site_url)}
-                />
-                <Item
-                    className={ItemStyle}
-                    label="Mark as reading"
-                    icon={BookOpen02Icon}
-                    action={() =>
-                        updateManga({
-                            id: manga._id,
-                            data: { status: "reading" },
-                        })
-                    }
-                />
-                <Item
-                    className={ItemStyle}
-                    label="Mark as planned"
-                    icon={LibraryIcon}
-                    action={() =>
-                        updateManga({
-                            id: manga._id,
-                            data: { status: "planned" },
-                        })
-                    }
-                />
-                <Item
-                    className={ItemStyle}
-                    label="Mark as hiatus"
-                    icon={BookBookmark02Icon}
-                    action={() =>
-                        updateManga({
-                            id: manga._id,
-                            data: { status: "hiatus" },
-                        })
-                    }
-                />
-                <Item
-                    className={ItemStyle}
-                    label="Mark as archived"
-                    icon={Archive02Icon}
-                    action={() =>
-                        updateManga({
-                            id: manga._id,
-                            data: { status: "archived" },
-                        })
-                    }
-                />
-                <Item
-                    className={ItemStyle}
-                    label="Edit Manga"
-                    icon={Edit02Icon}
-                    action={(e) => {
-                        e.preventDefault();
-                        setTarget(manga._id);
-                        toggleSidebar();
-                    }}
-                />
-                <Item
-                    className="focus:bg-[--clr-danger-a0] focus:text-white"
-                    label="Delete"
-                    icon={Delete02Icon}
-                    action={() => deleteManga({ id: manga._id })}
-                />
-            </DropdownMenuContent>
-        </DropdownMenu>
-    );
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button className="rounded-full aspect-[1/1] h-6 p-1">
+          <HugeiconsIcon
+            icon={MoreHorizontalIcon}
+            size={16}
+            fill="white"
+            color="currentColor"
+            strokeWidth={1.5}
+          />
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent className="w-56 bg-[--clr-surface-a10] backdrop-blur-md rounded-lg" align="center" >
+        <Item
+          className={ItemStyle}
+          label="Copy Title"
+          icon={ClipboardCopyIcon}
+          action={() =>
+            copyValue(manga.title, `${manga.title} Copied Successfully`)
+          }
+        />
+        <Item
+          className={ItemStyle}
+          label="Copy Link"
+          icon={Link04Icon}
+          action={() =>
+            copyValue(manga.url, "Manga Linked Copied Successfully!")
+          }
+        />
+        <Item
+          className={ItemStyle}
+          label="Mark as reading"
+          icon={BookOpen02Icon}
+          action={() => update("reading")}
+        />
+        <Item
+          className={ItemStyle}
+          label="Mark as planned"
+          icon={LibraryIcon}
+          action={() => update("planned")}
+        />
+        <Item
+          className={ItemStyle}
+          label="Mark as hiatus"
+          icon={BookBookmark02Icon}
+          action={() => update("hiatus")}
+        />
+        <Item
+          className={ItemStyle}
+          label="Mark as archived"
+          icon={Archive02Icon}
+          action={() => update("archived")}
+        />
+        <Item
+          className={ItemStyle}
+          label="Edit Manga"
+          icon={Edit02Icon}
+          action={(e) => {
+            e.preventDefault();
+            setTarget(manga.id);
+            toggleSidebar();
+          }}
+        />
+        <Item
+          className="focus:bg-[--clr-danger-a0] focus:text-white"
+          label="Delete"
+          icon={Delete02Icon}
+          action={() => deleteManga({ id: manga.id })}
+        />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }

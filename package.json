@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "@clerk/chrome-extension": "^3.1.5",
-        "@hugeicons/core-free-icons": "^4.1.1",
+        "@hugeicons/core-free-icons": "^4.2.0",
         "@hugeicons/react": "^1.1.6",
         "@plasmohq/messaging": "^0.7.2",
         "@radix-ui/react-accordion": "^1.2.12",

@@ -1,23 +1,13 @@
 {
   "extends": "plasmo/templates/tsconfig.base",
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    ".plasmo/index.d.ts",
-    "./**/*.ts",
-    "./**/*.tsx"
-  ],
+  "exclude": ["node_modules"],
+  "include": [".plasmo/index.d.ts", "./**/*.ts", "./**/*.tsx"],
   "compilerOptions": {
+    "baseUrl": ".",
+    "moduleResolution": "bundler",
     "paths": {
-      "~/*": [
-        "./src/*"
-      ],
-      "~assets": [
-        "./assets/*"
-      ]
-
-    },
-    "baseUrl": "."
+      "~/*": ["./src/*"],
+      "~assets": ["./assets/*"]
+    }
   }
 }

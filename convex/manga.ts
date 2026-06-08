@@ -5,7 +5,6 @@ import { internalMutation, action } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 
-import { searchMangadexByTitle } from "./mangadex";
 
 const statusValidator = v.union(
   v.literal("reading"),
@@ -261,6 +260,15 @@ export const deleteManga = mutation({
     if (!userManga || userManga.userId !== user._id) {
       throw new Error("Not found or unauthorized");
     }
+
+    // Delete associated userMangaSites
+    const userSites = await ctx.db
+      .query("userMangaSites")
+      .withIndex("by_userMangaId", (q) => q.eq("userMangaId", id))
+      .collect();
+
+    await Promise.all(userSites.map((site) => ctx.db.delete(site._id)));
+
     await ctx.db.delete(id);
     return id;
   },
