@@ -341,7 +341,8 @@ export const getManga = query({
     const user = await requireUser(ctx);
     const userManga = await ctx.db.get(id);
     if (!userManga || userManga.userId !== user._id) {
-      throw new Error("Not found or unauthorized");
+      return console.log("Not found or unauthorized")
+      // throw new Error("Not found or unauthorized");
     }
     const manga = await ctx.db.get("mangas", userManga.mangaId);
     const mangaTitles = (
