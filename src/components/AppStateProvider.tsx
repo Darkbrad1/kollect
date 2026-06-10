@@ -1,6 +1,6 @@
 //default values 
 const defaultView = "Card"
-const defaultStatus = "planned"
+const defaultStatus = "reading"
 
 
 import React, { createContext, useContext, useState } from "react";
@@ -36,7 +36,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     // State for storing the current search input
     const [search, setSearch] = useState("");
     // State for tracking which status the user is on
-    const [status, setStatus] = useState<Status>(defaultStatus));
+    const [status, setStatus] = useState<Status>(defaultStatus);
 
     const [target, setTarget] = useState<Id<"userMangas">>();
 

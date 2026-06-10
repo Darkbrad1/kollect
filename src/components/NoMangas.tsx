@@ -3,7 +3,7 @@ import { useAppState } from "./AppStateProvider";
 import type { Doc } from "convex/_generated/dataModel";
 
 interface NoMangaProps {
-    mangas: Doc<"Manga">[]
+    mangas: Doc<"mangas">[]
 }// or any icon you prefer
 export default function NoMangas({mangas}:NoMangaProps){
     const { search } = useAppState();
