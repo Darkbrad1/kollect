@@ -1,5 +1,6 @@
 // import type { Manga, user} from "./types"
 import { extractChapterNumber, getHostname, normalizeTitle } from "./parser";
+import type { MangaStatus } from "./types";
 
 export function getSelectedOptions(
   doc: Document = document,
@@ -10,7 +11,6 @@ export function getSelectedOptions(
 export function buildMangaDataFromDocument(
   site: string,
   scroll: number,
-  type: "all" | "progress" = "all",
   doc: Document = document,
 ) {
   const pageTitle = doc.title || "";
@@ -27,24 +27,18 @@ export function buildMangaDataFromDocument(
     ogTitle,
     selectedOptions,
   );
-
-  if (type === "all") {
-    return {
-      title: normalizedTitle,
-      currentChapter: chapterNumber ?? 0,
-      lastReadAt: Date.now(),
-      scroll: scroll,
-      domainName: getHostname(site),
-      site: site,
-    };
+  let status: MangaStatus = "planned";
+  if (chapterNumber > 0) {
+    status = "reading";
   }
 
-  if (type === "progress") {
-    return {
-      title: normalizedTitle,
-      currentChapter: chapterNumber ?? 0,
-      lastReadAt: Date.now(),
-      scroll: scroll,
-    };
-  }
+  return {
+    title: normalizedTitle,
+    currentChapter: chapterNumber ?? 0,
+    lastReadAt: Date.now(),
+    scroll: scroll,
+    domainName: getHostname(site),
+    site: site,
+    status: status,
+  };
 }

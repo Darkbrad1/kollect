@@ -42,7 +42,7 @@ export async function sendProgress(force = false) {
   contentState.lastSentScroll = scroll
 
   // Build manga data directly from the current page.
-  const manga = buildMangaDataFromDocument(location.href, scroll, "progress")
+  const manga = buildMangaDataFromDocument(location.href, scroll)
   console.log("scroll Position: ", manga.scroll)
 
   // The background message handler is responsible for auth/server work.

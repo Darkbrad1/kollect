@@ -108,7 +108,8 @@ export const addManga = action({
     currentChapter: v.float64(),
     lastReadAt: v.number(),
     scroll: v.float64(),
-    domainName: v.string(),
+    domainName: v.optional(v.string()),
+    status: v.optional(statusValidator),
     site: v.string(),
   },
   handler: async (ctx, args) => {
@@ -126,7 +127,7 @@ export const addManga = action({
       lastReadAt: args.lastReadAt,
       scroll: args.scroll,
       domainName: args.domainName,
-      status: "planned",
+      status: args.status,
       site: args.site,
     });
   },

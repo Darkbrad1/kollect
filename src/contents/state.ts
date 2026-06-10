@@ -1,7 +1,7 @@
 /**
  * Shared mutable state for the content script.
  *
- * We keep this in one place so multiple modules can read and update it
+ * We keep this in one place so multiple modules can read and update itstate
  * without relying on file-level globals scattered across the codebase.
  */
 export const contentState = {
