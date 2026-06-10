@@ -10,14 +10,14 @@ interface CardProps {
     image?: string;
     chapter?: string;
     title?: string;
-    url?: string;
+    site?: string;
     percentage?: number;
 }
 
-export default function Card({ id, image, chapter, title, url, percentage}: CardProps) {
-        const href = url && percentage
-        ? `${url}#kollect-scroll=${percentage}`
-        : url;
+export default function Card({ id, image, chapter, title, site, percentage}: CardProps) {
+        const href = site && percentage
+        ? `${site}#kollect-scroll=${percentage}`
+        : site;
     return (
         <a
             href={href}

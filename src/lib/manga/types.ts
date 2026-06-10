@@ -13,7 +13,7 @@ export type Manga = {
     scroll: number,
     status: MangaStatus,
     domainName: string,
-    url: string,
+    site: string,
 }
 
 export type UserMangaPayload = {
@@ -27,13 +27,13 @@ export type UserMangaPayload = {
   currentChapter: number;
 
   lastReadAt: Date | null;
-  status: string;
+  status: MangaStatus;
 
   scroll: number;
 
   DomainName: string;
-  url: string;
-  altUrl: string[];
+  site: string;
+  altSite: string[];
 };
 
 // export type PartialManga = {

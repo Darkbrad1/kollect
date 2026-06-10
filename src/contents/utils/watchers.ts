@@ -51,6 +51,7 @@ export function registerWatchers() {
  */
 function watchSpaNavigation() {
     // Save references to the original history methods before wrapping them.
+    console.log("SPA watcher registered")
     const originalPushState = history.pushState;
     const originalReplaceState = history.replaceState;
 
@@ -62,7 +63,8 @@ function watchSpaNavigation() {
      */
 
   
-    const handleUrlChange = () => {
+  const handleUrlChange = () => {
+    console.log("url changed triggered")
         if (location.href !== contentState.currentUrl) {
             void sendChapterChange();
         }

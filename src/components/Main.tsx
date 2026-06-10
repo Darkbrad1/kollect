@@ -37,7 +37,7 @@ export default function RenderMangas() {
                 {inputMangas.map((data) => (
                     <Card
                         key={data.id}
-                        url={data.url}
+                        site={data.site}
                         id={data.id}
                         image={data.coverImage}
                         chapter={`${data.currentChapter}`}

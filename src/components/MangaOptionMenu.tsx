@@ -84,7 +84,7 @@ export default function MenuOptionTriggered({ id, type }: OptionMenuProps) {
           label="Copy Link"
           icon={Link04Icon}
           action={() =>
-            copyValue(manga.url, "Manga Linked Copied Successfully!")
+            copyValue(manga.site, "Manga Linked Copied Successfully!")
           }
         />
         <Item

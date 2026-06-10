@@ -46,7 +46,7 @@ export async function sendProgress(force = false) {
   console.log("scroll Position: ", manga.scroll)
 
   // The background message handler is responsible for auth/server work.
-  const result = await sendToBackground({
+  await sendToBackground({
     name: "updateProgress",
     body: { manga }
   })

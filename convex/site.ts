@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query,  internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { requireUser } from "./auth";
 
@@ -150,8 +150,7 @@ export const deleteUserMangaSite = mutation({
     },
 });
 
-// findOrCreateSite
-export const findOrCreateSite = mutation({
+export const findOrCreateSiteInternal = internalMutation({
     args: { domainName: v.string() },
     handler: async (ctx, { domainName }) => {
         const existing = await ctx.db
@@ -165,20 +164,18 @@ export const findOrCreateSite = mutation({
 
         return await ctx.db.insert("sites", {
             domainName,
-            logo: "", // placeholder, update later if needed
+            logo: "",
         });
     },
 });
 
-// upsertUserMangaSite
-export const upsertUserMangaSite = mutation({
+export const upsertUserMangaSiteInternal = internalMutation({
     args: {
         userMangaId: v.id("userMangas"),
         siteId: v.id("sites"),
-        siteChapterUrl: v.string(),
+        siteUrl: v.string(),
     },
-    handler: async (ctx, { userMangaId, siteId, siteChapterUrl }) => {
-        // Set all existing sites for this manga to current: false
+    handler: async (ctx, { userMangaId, siteId, siteUrl }) => {
         const allSites = await ctx.db
             .query("userMangaSites")
             .withIndex("by_userMangaId", (q) =>
@@ -186,24 +183,15 @@ export const upsertUserMangaSite = mutation({
             )
             .collect();
 
-        await Promise.all(
-            allSites.map((site) => ctx.db.patch(site._id, { current: false })),
-        );
+        const existing = allSites.find((s) => s.siteId === siteId);
 
-        // Find if this specific site already exists
-        const existingSite = allSites.find((site) => site.siteId === siteId);
-
-        if (existingSite) {
-            await ctx.db.patch(existingSite._id, {
-                siteChapterUrl,
-                current: true,
-            });
+        if (existing) {
+            await ctx.db.patch(existing._id, { siteUrl });
         } else {
             await ctx.db.insert("userMangaSites", {
                 userMangaId,
                 siteId,
-                siteChapterUrl,
-                current: true,
+                siteUrl,
             });
         }
     },

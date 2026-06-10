@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { requireUser } from "./auth";
 
@@ -48,5 +48,22 @@ export const deleteMangaTitle = mutation({
         if (!mangaTitle) throw new Error("Title not found");
         await ctx.db.delete(id);
         return id;
+    },
+});
+export const upsertMangaTitleInternal = internalMutation({
+    args: {
+        mangaId: v.id("mangas"),
+        title: v.string(),
+    },
+    handler: async (ctx, { mangaId, title }) => {
+        const existing = await ctx.db
+            .query("mangaTitles")
+            .withIndex("by_mangaId", (q) => q.eq("mangaId", mangaId))
+            .filter((q) => q.eq(q.field("title"), title))
+            .first();
+
+        if (!existing) {
+            await ctx.db.insert("mangaTitles", { mangaId, title });
+        }
     },
 });

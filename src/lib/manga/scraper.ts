@@ -8,7 +8,7 @@ export function getSelectedOptions(
 }
 
 export function buildMangaDataFromDocument(
-  url: string,
+  site: string,
   scroll: number,
   type: "all" | "progress" = "all",
   doc: Document = document,
@@ -34,8 +34,8 @@ export function buildMangaDataFromDocument(
       currentChapter: chapterNumber ?? 0,
       lastReadAt: Date.now(),
       scroll: scroll,
-      domainName: getHostname(url),
-      url: url,
+      domainName: getHostname(site),
+      site: site,
     };
   }
 

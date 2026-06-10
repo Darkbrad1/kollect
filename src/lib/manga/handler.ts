@@ -8,6 +8,7 @@ import { addManga, DoesMangaExist, updateManga } from "./repository";
 // If the existingData already exists, merge the new information into the existing record.
 // Otherwise create a fresh existingData entry.
 export async function handleAddManga(manga: Manga) {
+  console.log("Add Manga handler triggered",)
   const existing = await DoesMangaExist(manga.title);
   // If we already know this manga, merge useful fields instead of duplicating it.
   if (existing) {
@@ -21,7 +22,7 @@ export async function handleAddManga(manga: Manga) {
 
       // Use the latest source as the active one.
       domainName: manga.domainName,
-      url: manga.url,
+      site: manga.site,
     });
 
     return;
@@ -35,6 +36,8 @@ export async function handleAddManga(manga: Manga) {
 
 // Handle scroll/progress updates from the reader page.
 export async function handleProgressUpdate(newData: Manga) {
+  console.log("update progress handler triggered", newData)
+  
   const existingData = await DoesMangaExist(newData.title);
   // If no matching existingData exists, there is nothing to update.
   if (!existingData) return console.log("No manga found")
@@ -64,6 +67,8 @@ export async function handleProgressUpdate(newData: Manga) {
 
 
 export async function handleChapterUpdate(newData: Manga) {
+  console.log("update chapter handler triggered")
+  
   const existingData = await DoesMangaExist(newData.title);
   if (!existingData) {
     console.log("manga does not exist -", newData.title);
@@ -84,6 +89,6 @@ export async function handleChapterUpdate(newData: Manga) {
     lastReadAt: Date.now(),
     scroll: newData.scroll,
     domainName: newData.domainName,
-    url: newData.url,
+    site: newData.site,
   });
 }

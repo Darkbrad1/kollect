@@ -17,6 +17,7 @@ const statusValidator = v.union(
 export const mangaExist = query({
   args: { mangadexId: v.string() },
   handler: async (ctx, { mangadexId }) => {
+    console.log("manga exist")
     return await ctx.db
       .query("mangas")
       .filter((q: any) => q.eq(q.field("mangadexId"), mangadexId))
@@ -27,6 +28,7 @@ export const mangaExist = query({
 export const userMangaExist = query({
   args: { mangaId: v.id("mangas") },
   handler: async (ctx, { mangaId }) => {
+    console.log("user Manga Exist")
     const user = await requireUser(ctx);
     return await ctx.db
       .query("userMangas")
@@ -39,6 +41,7 @@ export const userMangaExist = query({
 export const findUserMangaByTitle = query({
   args: { title: v.string() },
   handler: async (ctx, args) => {
+    console.log("find user Manga by title")
     const user = await requireUser(ctx);
     const searchTerm = args.title.toLowerCase();
 
@@ -71,7 +74,7 @@ export const findUserMangaByTitle = query({
         .withIndex("by_userMangaId", (q) => q.eq("userMangaId", userManga._id))
         .collect();
 
-      const currentUserSite = userSites.find((s) => s.current);
+      const currentUserSite = userSites.find((site) => site.siteUrl=== userManga.site );
       if (!currentUserSite) continue;
 
       const currentSite = await ctx.db.get(currentUserSite.siteId);
@@ -89,7 +92,7 @@ export const findUserMangaByTitle = query({
         status: userManga.status,
         scroll: userManga.scroll,
         DomainName: currentSite.domainName,
-        url: currentUserSite.siteUrl,
+        site: currentUserSite.siteUrl,
         altUrl: userSites.map((s) => s.siteUrl),
         
       };
@@ -106,9 +109,10 @@ export const addManga = action({
     lastReadAt: v.number(),
     scroll: v.float64(),
     domainName: v.string(),
-    url: v.string(),
+    site: v.string(),
   },
   handler: async (ctx, args) => {
+    console.log("Add Manga")
     const dexResults = await ctx.runAction(
       internal.mangadex.searchMangadexByTitle,
       { title: args.title },
@@ -123,7 +127,7 @@ export const addManga = action({
       scroll: args.scroll,
       domainName: args.domainName,
       status: "planned",
-      url: args.url,
+      site: args.site,
     });
   },
 });
@@ -138,9 +142,10 @@ export const createManga = internalMutation({
     scroll: v.float64(),
     status: statusValidator,
     domainName: v.string(),
-    url: v.string(),
+    site: v.string(),
   },
   handler: async (ctx, args) => {
+    console.log("create Manga")
     const user = await requireUser(ctx);
 
     // 1. Find or insert manga
@@ -168,18 +173,10 @@ export const createManga = internalMutation({
 
 
     // 2. Insert into mangaTitles (only if it doesn't exist)
-    const existingTitle = await ctx.db
-      .query("mangaTitles")
-      .withIndex("by_mangaId", (q) => q.eq("mangaId", mangaId))
-      .filter((q) => q.eq(q.field("title"), args.title))
-      .first();
-    
-    if (!existingTitle) {
-      await ctx.db.insert("mangaTitles", {
+    await ctx.runMutation(internal.Title.upsertMangaTitleInternal, {
         mangaId,
         title: args.title,
-      });
-    }
+    });
 
     // 3. Insert into userMangas
     const userMangaId = await ctx.db.insert("userMangas", {
@@ -190,28 +187,19 @@ export const createManga = internalMutation({
       lastReadAt: args.lastReadAt,
       scroll: args.scroll,
       status: args.status,
+      site: args.site,
     });
 
-    // 4. Find or create site
-    let site = await ctx.db
-      .query("sites")
-      .withIndex("by_domainName", (q) => q.eq("domainName", args.domainName))
-      .unique();
-
-    if (!site) {
-      const siteId = await ctx.db.insert("sites", {
-        domainName: args.domainName,
-        logo: "",
-      });
-      site = await ctx.db.get(siteId);
-    }
-
-    // 5. Insert into userMangaSites
-    await ctx.db.insert("userMangaSites", {
-      userMangaId,
-      siteId: site!._id,
-      siteUrl: args.url,
-      current: true,
+    // 4 & 5. Find/create site and link to userManga
+    const siteId = await ctx.runMutation(
+        internal.site.findOrCreateSiteInternal,
+        { domainName: args.domainName },
+    );
+    
+    await ctx.runMutation(internal.site.upsertUserMangaSiteInternal, {
+        userMangaId,
+        siteId,
+        siteUrl: args.site,
     });
 
     return userMangaId;
@@ -226,28 +214,47 @@ export const updateManga = mutation({
       currentChapter: v.optional(v.float64()),
       lastReadAt: v.optional(v.number()),
       domainName: v.optional(v.string()),
-      url: v.optional(v.string()),
+      site: v.optional(v.string()),
       scroll: v.optional(v.float64()),
       status: v.optional(statusValidator),
     }),
   },
 
   handler: async (ctx, { id, data }) => {
+    console.log("update Manga");
     const user = await requireUser(ctx);
     const userManga = await ctx.db.get(id);
     if (!userManga || userManga.userId !== user._id) {
       throw new Error("Not found or unauthorized");
     }
-    await ctx.db.patch(
-      id,
-      {
-        title: data.title,
+
+    const patchData = {
+      ...(data.title !== undefined && { title: data.title }),
+      ...(data.currentChapter !== undefined && {
         currentChapter: data.currentChapter,
-        lastReadAt: data.lastReadAt,
-        scroll: data.scroll,
-        status: "planned",
-      }
-    );
+      }),
+      ...(data.lastReadAt !== undefined && { lastReadAt: data.lastReadAt }),
+      ...(data.scroll !== undefined && { scroll: data.scroll }),
+      ...(data.status !== undefined && { status: data.status }),
+      ...(data.site !== undefined && { site: data.site }),
+
+    };
+    await ctx.db.patch(id, patchData);
+
+    // Update the current user site if siteUrl is provided
+    // if (data.site !== undefined) {
+    //   const userSites = await ctx.db
+    //     .query("userMangaSites")
+    //     .withIndex("by_userMangaId", (q) => q.eq("userMangaId", userManga._id))
+    //     .collect();
+
+    //   const currentUserSite = userSites.find((site) => site.siteUrl === userManga.site);
+
+    //   if (currentUserSite) {
+    //     await ctx.db.patch(currentUserSite._id, { siteUrl: data.site });
+    //   }
+    // }
+
     return id;
   },
 });
@@ -255,6 +262,7 @@ export const updateManga = mutation({
 export const deleteManga = mutation({
   args: { id: v.id("userMangas") },
   handler: async (ctx, { id }) => {
+    console.log("delete Manga")
     const user = await requireUser(ctx);
     const userManga = await ctx.db.get(id);
     if (!userManga || userManga.userId !== user._id) {
@@ -277,6 +285,7 @@ export const deleteManga = mutation({
 export const listManga = query({
   args: {},
   handler: async (ctx) => {
+    console.log("list Manga")
     const user = await requireUser(ctx);
 
     const userMangas = await ctx.db
@@ -300,9 +309,9 @@ export const listManga = query({
             .query("mangaTitles")
             .withIndex("by_mangaId", (q) => q.eq("mangaId", manga._id))
             .collect(),
-          ctx.db.get(userSites.find((s) => s.current)?.siteId),
+          ctx.db.get(userSites.find((site) => site.siteUrl=== userManga.site )?.siteId),
         ]);
-        const currentUserSite = userSites.find((s) => s.current);
+        const currentUserSite = userSites.find((site) => site.siteUrl=== userManga.site );
 
         return {
           id: userManga._id,
@@ -315,7 +324,7 @@ export const listManga = query({
           status: userManga.status,
           scroll: userManga.scroll,
           DomainName: currentSite.domainName,
-          url: currentUserSite.siteUrl,
+          site: currentUserSite.siteUrl,
           altUrl: userSites.map((site) => site.siteUrl),
         };
       }),
@@ -328,6 +337,7 @@ export const getManga = query({
     id: v.id("userMangas"),
   },
   handler: async (ctx, { id }) => {
+    console.log("get Manga")
     const user = await requireUser(ctx);
     const userManga = await ctx.db.get(id);
     if (!userManga || userManga.userId !== user._id) {
@@ -344,7 +354,7 @@ export const getManga = query({
       .query("userMangaSites")
       .withIndex("by_userMangaId", (q) => q.eq("userMangaId", userManga._id))
       .collect();
-    const currentUserSite = userSites.find((site) => site.current);
+    const currentUserSite = userSites.find((site) => site.siteUrl);
     const userAltSites = userSites.map((site) => site.siteUrl);
     const site = await ctx.db.get("sites", currentUserSite.siteId);
     return {
@@ -359,7 +369,7 @@ export const getManga = query({
       scroll: userManga.scroll,
       status: userManga.status,
       domainName: site.domainName,
-      url: currentUserSite.siteUrl,
+      site: currentUserSite.siteUrl,
       altUrl: userAltSites,
     };
   },
