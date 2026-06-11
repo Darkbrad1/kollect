@@ -43,13 +43,15 @@ export async function sendProgress(force = false) {
 
   // Build manga data directly from the current page.
   const manga = buildMangaDataFromDocument(location.href, scroll)
-  console.log("scroll Position: ", manga.scroll)
+  // console.log("scroll Position: ", manga.scroll)
 
   // The background message handler is responsible for auth/server work.
-  await sendToBackground({
+  const result = await sendToBackground({
     name: "updateProgress",
     body: { manga }
   })
+  console.log("progress sender result", result)
+  
 }
 
 
@@ -74,14 +76,13 @@ export async function sendChapterChange() {
   )
 
   console.log("in sendChapterChange - ", manga)
-
   const result = await sendToBackground({
     name: "updateChapter",
     body: { manga }
   })
-  if (!result){
-    toast.error(`Something went wrong while updating to chpater ${manga.currentChapter}`)
+  if (result.ok){
+    toast.success(result.message)
   }else{
-    toast.success(`upated ${manga.title} to chapter ${manga.currentChapter}`)
+    toast.error(`Something went wrong while updating to chpater ${manga.currentChapter}`)
   }
 }

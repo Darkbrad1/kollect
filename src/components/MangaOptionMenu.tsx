@@ -1,5 +1,6 @@
 import { api } from "convex/_generated/api";
-import type { UserMangaPayload, MangaStatus } from "~/lib/manga/types";
+import type { UserMangaPayload } from "~/lib/manga/types";
+import type { TabStatus } from "~/settings/appSetting";
 import type { Id } from "convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
@@ -47,7 +48,7 @@ export default function MenuOptionTriggered({ id, type }: OptionMenuProps) {
     toast.success(message);
   }
 
-  function update(status: MangaStatus) {
+  function update(status: TabStatus) {
     updateManga({
       id: manga.id,
       data: { status: status },

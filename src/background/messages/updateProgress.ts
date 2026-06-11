@@ -7,13 +7,13 @@ import { handleProgressUpdate } from "~/lib/manga/handler"
 // The auth token is looked up in the background and passed into the handler.
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const { manga } = req.body
-
   const result = await handleProgressUpdate(manga)
-  if (result) { 
-    console.log("progress updated successfully")
+  console.log("result", result);
+  if (!result) {
+    console.log("progress update failed")
+    return 
   }
-  
-  res.send({ ok: true })
+  res.send(true)
 }
 
 export default handler

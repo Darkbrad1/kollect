@@ -4,13 +4,13 @@ import { requireUser } from "./auth";
 import { internalMutation, action } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-
+import { tabs } from "~/settings/appSetting";
 
 const statusValidator = v.union(
-  v.literal("reading"),
-  v.literal("planned"),
-  v.literal("hiatus"),
-  v.literal("archived"),
+  v.literal(tabs[0]),
+  v.literal(tabs[1]),
+  v.literal(tabs[2]),
+  v.literal(tabs[3]),
 );
 
 // ─── Manga Exist (in mangas table by mangadexId) ─────────────────────────────
@@ -243,18 +243,18 @@ export const updateManga = mutation({
     await ctx.db.patch(id, patchData);
 
     // Update the current user site if siteUrl is provided
-    // if (data.site !== undefined) {
-    //   const userSites = await ctx.db
-    //     .query("userMangaSites")
-    //     .withIndex("by_userMangaId", (q) => q.eq("userMangaId", userManga._id))
-    //     .collect();
+    if (data.site !== undefined) {
+      const userSites = await ctx.db
+        .query("userMangaSites")
+        .withIndex("by_userMangaId", (q) => q.eq("userMangaId", userManga._id))
+        .collect();
 
-    //   const currentUserSite = userSites.find((site) => site.siteUrl === userManga.site);
+      const currentUserSite = userSites.find((site) => site.siteUrl === userManga.site);
 
-    //   if (currentUserSite) {
-    //     await ctx.db.patch(currentUserSite._id, { siteUrl: data.site });
-    //   }
-    // }
+      if (currentUserSite) {
+        await ctx.db.patch(currentUserSite._id, { siteUrl: data.site });
+      }
+    }
 
     return id;
   },
@@ -305,12 +305,16 @@ export const listManga = query({
             )
             .collect(),
         ]);
+        console.log(manga)
+
+          console.log(userSites)
+        
         const [mangaTitles, currentSite] = await Promise.all([
           ctx.db
             .query("mangaTitles")
             .withIndex("by_mangaId", (q) => q.eq("mangaId", manga._id))
             .collect(),
-          ctx.db.get(userSites.find((site) => site.siteUrl=== userManga.site )?.siteId),
+          ctx.db.get(userSites.find((site) => site.siteUrl === userManga.site).siteId),
         ]);
         const currentUserSite = userSites.find((site) => site.siteUrl=== userManga.site );
 

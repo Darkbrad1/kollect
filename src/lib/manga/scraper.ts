@@ -1,6 +1,6 @@
 // import type { Manga, user} from "./types"
 import { extractChapterNumber, getHostname, normalizeTitle } from "./parser";
-import type { MangaStatus } from "./types";
+import type { TabStatus } from "~/settings/appSetting";
 
 export function getSelectedOptions(
   doc: Document = document,
@@ -27,7 +27,7 @@ export function buildMangaDataFromDocument(
     ogTitle,
     selectedOptions,
   );
-  let status: MangaStatus = "planned";
+  let status: TabStatus = "planned";
   if (chapterNumber > 0) {
     status = "reading";
   }

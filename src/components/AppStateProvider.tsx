@@ -1,6 +1,5 @@
 //default values 
-const defaultView = "Card"
-const defaultStatus = "reading"
+import appSettings from "~/settings/appSetting";
 
 
 import React, { createContext, useContext, useState } from "react";
@@ -32,11 +31,11 @@ const AppStateContext = createContext<AppState | null>(null);
 // Context provider component that wraps the app
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
     // State for controlling how content is displayed
-    const [view, setView] = useState(defaultView);
+    const [view, setView] = useState(appSettings.defaultView);
     // State for storing the current search input
     const [search, setSearch] = useState("");
     // State for tracking which status the user is on
-    const [status, setStatus] = useState<Status>(defaultStatus);
+    const [status, setStatus] = useState<Status>(appSettings.defaultStatus);
 
     const [target, setTarget] = useState<Id<"userMangas">>();
 

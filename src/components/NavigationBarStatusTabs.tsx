@@ -1,5 +1,5 @@
-import { useState } from "react";
 import NavButton from "./NavigationBarButton";
+import { tabs } from "~/settings/appSetting";
 import {
     Archive02Icon,
     LibraryIcon,
@@ -7,63 +7,58 @@ import {
     BookOpen02Icon,
 } from "@hugeicons/core-free-icons";
 import { useAppState } from "./AppStateProvider";
-import { s } from "react-router/dist/development/instrumentation-BYr6ff5D";
 
 export default function NavigationBarStatusTabs() {
     const { status, setStatus } = useAppState();
     const sw = (s: string) => (status === s ? 2.1 : 1.5);
-    const reading = "reading"
-    const hiatus = "hiatus"
-    const planned = "planned"
-    const archived = "archived"
     return (
         <div className="rounded-full bg-[--clr-surface-a10] custom-edge status-wrapper">
             <div className="bubble active"></div>
 
             <NavButton
                 className={`hover:bg-[--clr-surface-a20] status-tab hover:text-[white] ${
-                    status === reading ? "active" : ""
+                    status === tabs[0] ? "active" : ""
                 }`}
                 variant="ghost"
                 icon={BookOpen02Icon}
                 // strokeWidth={strokeWidth}
-                strokeWidth={sw(reading)}
-                onClick={() => setStatus(reading)}
-                tooltip={reading}
+                strokeWidth={sw(tabs[0])}
+                onClick={() => setStatus(tabs[0])}
+                tooltip={tabs[0]}
 
             />
 
             <NavButton
                 className={`hover:bg-[--clr-surface-a20] status-tab hover:text-[white] ${
-                    status === planned ? "active" : ""
+                    status === tabs[1] ? "active" : ""
                 }`}
                 variant="ghost"
                 icon={LibraryIcon}
-                strokeWidth={sw(planned)}
-                onClick={() => setStatus(planned)}
-                tooltip={planned}
+                strokeWidth={sw(tabs[1])}
+                onClick={() => setStatus(tabs[1])}
+                tooltip={tabs[1]}
             />
 
             <NavButton
                 className={`hover:bg-[--clr-surface-a20] status-tab hover:text-[white] ${
-                    status === hiatus ? "active" : ""
+                    status === tabs[2] ? "active" : ""
                 }`}
                 variant="ghost"
                 icon={BookBookmark02Icon}
-                strokeWidth={sw(hiatus)}
-                onClick={() => setStatus(hiatus)}
-                tooltip={hiatus}
+                strokeWidth={sw(tabs[2])}
+                onClick={() => setStatus(tabs[2])}
+                tooltip={tabs[2]}
             />
 
             <NavButton
                 className={`hover:bg-[--clr-surface-a20] status-tab hover:text-[white] ${
-                    status === archived ? "active" : ""
+                    status === tabs[3] ? "active" : ""
                 }`}
                 variant="ghost"
                 icon={Archive02Icon}
-                strokeWidth={sw(archived)}
-                onClick={() => setStatus(archived)}
-                tooltip={archived}
+                strokeWidth={sw(tabs[3])}
+                onClick={() => setStatus(tabs[3])}
+                tooltip={tabs[3]}
 
             />
         </div>

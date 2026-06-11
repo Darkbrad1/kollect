@@ -1,5 +1,4 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging";
-import type { Id } from "convex/_generated/dataModel";
 
 import { handleChapterUpdate } from "~/lib/manga/handler";
 
@@ -10,11 +9,12 @@ import { handleChapterUpdate } from "~/lib/manga/handler";
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const { manga } = req.body;
   const result = await handleChapterUpdate(manga);
-  if (result) {
-    console.log("Chapter updated successfully");
+  console.log(result)
+  if (!result.ok) {
+    console.log("chapter update failed")
+    return 
   }
-
-  res.send({ ok: true });
+  res.send(result)
 };
 
 export default handler;
