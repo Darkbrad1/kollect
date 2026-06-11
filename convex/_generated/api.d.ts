@@ -8,12 +8,10 @@
  * @module
  */
 
-import type * as Title from "../Title.js";
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
 import type * as manga from "../manga.js";
 import type * as mangadex from "../mangadex.js";
-import type * as seed from "../seed.js";
 import type * as site from "../site.js";
 import type * as users from "../users.js";
 
@@ -24,12 +22,10 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
-  Title: typeof Title;
   auth: typeof auth;
   http: typeof http;
   manga: typeof manga;
   mangadex: typeof mangadex;
-  seed: typeof seed;
   site: typeof site;
   users: typeof users;
 }>;

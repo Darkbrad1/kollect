@@ -36,10 +36,7 @@ export default defineSchema({
   mangas: defineTable({
     coverImage: v.string(),
     mangadexId: v.string(),
+    titles: v.array(v.string())
   }).index("by_mangadexId", ["mangadexId"]),
 
-  mangaTitles: defineTable({
-    mangaId: v.id("mangas"),
-    title: v.string(),
-  }).index("by_mangaId", ["mangaId"]),
 });
