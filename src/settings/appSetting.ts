@@ -5,7 +5,8 @@ export type TabStatus = typeof tabs[number];
 const appSettings = {
   defaultView: "card",
   defaultStatus: tabs[0],
-  scrollThreshold: 0
+  scrollThreshold: 0,
+  cardSize: 144, // this value is in pixel good sizes are 144, 182
 };
 
 export default appSettings

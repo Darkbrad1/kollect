@@ -72,7 +72,6 @@ export async function handleAddManga(manga: Manga) {
 
 
 export async function handleChapterUpdate(newData: Manga) {
-  console.clear()
   console.log("update chapter handler triggered", newData)
   
   const existingData = await DoesMangaExist(newData.title);

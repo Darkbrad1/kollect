@@ -1,9 +1,10 @@
 import { LibraryBig } from "lucide-react";
 import { useAppState } from "./AppStateProvider";
-import type { Doc } from "convex/_generated/dataModel";
+// import type { Doc } from "convex/_generated/dataModel";
+import type { UserMangaPayload } from "~/lib/manga/types";
 
 interface NoMangaProps {
-    mangas: Doc<"mangas">[]
+    mangas: UserMangaPayload[]
 }// or any icon you prefer
 export default function NoMangas({mangas}:NoMangaProps){
     const { search } = useAppState();

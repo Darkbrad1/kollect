@@ -19,7 +19,11 @@ export function buildMangaDataFromDocument(
       .querySelector('meta[property="og:title"]')
       ?.getAttribute("content")
       ?.trim() || "";
-
+  const iconEl = doc.querySelector(
+    'link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]'
+  );
+  
+  const webpageIcon = iconEl?.href || "";
   const selectedOptions = getSelectedOptions(doc);
   const normalizedTitle = normalizeTitle(ogTitle || pageTitle);
   const chapterNumber = extractChapterNumber(
@@ -28,7 +32,7 @@ export function buildMangaDataFromDocument(
     selectedOptions,
   );
   let status: TabStatus = "planned";
-  if (chapterNumber > 0) {
+  if (chapterNumber > 1) {
     status = "reading";
   }
 
@@ -39,6 +43,7 @@ export function buildMangaDataFromDocument(
     scroll: scroll,
     domainName: getHostname(site),
     site: site,
+    siteLogo: webpageIcon,
     status: status,
   };
 }

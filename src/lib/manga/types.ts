@@ -12,7 +12,8 @@ export type Manga = {
     lastReadAt: number,
     scroll: number,
     status: MangaStatus,
-    domainName: string,
+  domainName: string,
+    siteLogo: string,
     site: string,
 }
 
@@ -20,18 +21,14 @@ export type UserMangaPayload = {
   id: Id<"userMangas">;
   MangaDexId: string;
   coverImage: string | null;
-
   title: string;
   altTitles: string[];
-
   currentChapter: number;
-
   lastReadAt: Date | null;
   status: MangaStatus;
-
   scroll: number;
-
   DomainName: string;
   site: string;
   altSite: string[];
+  siteLogo: string;
 };

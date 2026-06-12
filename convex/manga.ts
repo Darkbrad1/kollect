@@ -96,6 +96,7 @@ export const addManga = action({
     domainName: v.optional(v.string()),
     status: v.optional(statusValidator),
     site: v.string(),
+    siteLogo: v.string()
   },
   handler: async (ctx, args) => {
     console.log("Add Manga");
@@ -115,6 +116,7 @@ export const addManga = action({
       domainName: args.domainName,
       status: args.status,
       site: args.site,
+      siteLogo: args.siteLogo,
     });
   },
 });
@@ -131,6 +133,7 @@ export const createManga = internalMutation({
     status: statusValidator,
     domainName: v.string(),
     site: v.string(),
+    siteLogo: v.string()
   },
   handler: async (ctx, args) => {
     console.log("create Manga");
@@ -198,7 +201,7 @@ export const createManga = internalMutation({
       if (!siteExists) {
         const siteId = await ctx.runMutation(
           internal.site.findOrCreateSiteInternal,
-          { domainName: args.domainName },
+          { domainName: args.domainName, logo: args.siteLogo},
         );
 
         await ctx.db.insert("userMangaSites", {
@@ -346,7 +349,8 @@ export const listManga = query({
           scroll: userManga.scroll,
           DomainName: currentSite.domainName,
           site: currentUserSite.siteUrl,
-          altUrl: userSites.map((site) => site.siteUrl),
+          siteLogo: currentSite.logo,
+          altSite: userSites.map((site) => site.siteUrl),
         };
       }),
     );
@@ -378,7 +382,6 @@ export const getManga = query({
       id: userManga._id,
       coverImage: manga.coverImage,
       MangaDexId: manga.mangadexId,
-
       title: userManga.title,
       altTitles: manga.titles,
       currentChapter: userManga.currentChapter,
@@ -387,7 +390,8 @@ export const getManga = query({
       status: userManga.status,
       domainName: site.domainName,
       site: currentUserSite.siteUrl,
-      altUrl: userAltSites,
+      siteLogo: site.logo,
+      altSite: userAltSites,
     };
   },
 });

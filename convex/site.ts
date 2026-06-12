@@ -151,8 +151,8 @@ export const deleteUserMangaSite = mutation({
 });
 
 export const findOrCreateSiteInternal = internalMutation({
-    args: { domainName: v.string() },
-    handler: async (ctx, { domainName }) => {
+    args: { domainName: v.string(), logo: v.string()},
+    handler: async (ctx, { domainName, logo }) => {
         const existing = await ctx.db
             .query("sites")
             .withIndex("by_domainName", (q) =>
@@ -164,7 +164,7 @@ export const findOrCreateSiteInternal = internalMutation({
 
         return await ctx.db.insert("sites", {
             domainName,
-            logo: "",
+            logo,
         });
     },
 });
