@@ -5,12 +5,15 @@ import kollectLogo from "~assets/kollect.png"
 // import AppPreview from '../../assets/appPreview.png'
 
 function openSignInPage() {
-  chrome.tabs.create({
-    url: chrome.runtime.getURL("tabs/auth.html?mode=sign-in")
-  })
+  // chrome.tabs.create({
+  //   url: chrome.runtime.getURL("tabs/auth.html?mode=sign-in")
+  // })
   // chrome.tabs.create({
   //   url: "https://kollect-auth.vercel.app/sign-in",
   // });
+  chrome.tabs.create({
+    url: "http://localhost:3000/sign-in",
+  });
 }
 function openSignUpPage() {
   chrome.tabs.create({

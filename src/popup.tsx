@@ -18,10 +18,13 @@ import "~/style.css";
 
 import SignIn from "~/components/SignIn";
 
-const publishableKey = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const PUBLISHABLE_KEY = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const SYNC_HOST = process.env.PLASMO_PUBLIC_CLERK_SYNC_HOST
 
-if (!publishableKey) {
-  throw new Error("Missing PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY");
+if (!PUBLISHABLE_KEY || !SYNC_HOST) {
+  throw new Error(
+    'Please add the PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY and PLASMO_PUBLIC_CLERK_SYNC_HOST to the .env.development file',
+  )
 }
 
 function ClerkTokenSync() {
@@ -49,18 +52,20 @@ function ClerkTokenSync() {
   return null;
 }
 export default function Popup() {
-  return (
-    <ClerkProvider
-      publishableKey={publishableKey}
-      allowedRedirectOrigins={[`chrome-extension://${chrome.runtime.id}`]}
-      afterSignOutUrl="/popup.html"
-    >
-      <ClerkTokenSync />
-      <ConvexProviderWithAuth client={convex} useAuth={useConvexClerkAuth}>
-        <div className="h-[600px] w-[800px] overflow-hidden">
-          <Show when="signed-out">
-            <SignIn />
-          </Show>
+    return (
+        <ClerkProvider
+        publishableKey={PUBLISHABLE_KEY}
+        afterSignOutUrl="/popup.html"
+        syncHost={SYNC_HOST}
+      >
+        <ClerkTokenSync />
+            <ConvexProviderWithAuth
+                client={convex}
+                useAuth={useConvexClerkAuth}>
+                <div className="h-[600px] w-[800px] overflow-hidden">
+                    <Show when="signed-out">
+                        <SignIn />
+                    </Show>
 
           <Show when="signed-in">
             <AppStateProvider>
