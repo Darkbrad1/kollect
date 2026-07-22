@@ -50,7 +50,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 // Get the stored Clerk auth token from extension local storage
 export async function getStoredClerkToken(): Promise<string | null> {
   // Read the "clerk_token" value from chrome.storage.local
-  const result = await chrome.storage.local.get("clerk_token")
+  const result = await chrome.storage.session.get("clerk_token")
 
   // Return the token if it exists, otherwise return null
   return result.clerk_token ?? null
