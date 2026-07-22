@@ -14,7 +14,7 @@ export default function RenderMangas() {
   const mangas: UserMangaPayload[] = useQuery(api.manga.listManga);
   console.log(mangas);
   // const mangas = undefined
-  if (mangas === undefined) {
+if (mangas === undefined) {
     return (
       <CardWrapper>
         {Array.from({ length: 15 }).map((_, i) => (

@@ -62,12 +62,12 @@
       "storage",
       "contextMenus",
       "tabs",
-      "activeTab"
+      "activeTab",
+      "identity"
     ],
     "host_permissions": [
       "http://localhost/*",
-      "https://*.clerk.accounts.dev/*",
-      "$CLERK_FRONTEND_API/*"
+      "https://*.clerk.accounts.dev/*"
     ],
     "web_accessible_resources": [
       {

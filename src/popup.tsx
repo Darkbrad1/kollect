@@ -3,8 +3,10 @@ import {
   Show,
   useAuth,
   UserButton,
+  useUser,
 } from "@clerk/chrome-extension";
-import { ConvexProviderWithAuth } from "convex/react";
+import { ConvexProviderWithAuth, useMutation } from "convex/react";
+
 import { useEffect } from "react";
 import { AppStateProvider } from "~/components/AppStateProvider";
 import Main from "~/components/Main";
@@ -16,57 +18,32 @@ import { AppSidebar } from "~/components/AppSidebar";
 import { Toaster } from "./components/ui/sonner";
 import "~/style.css";
 
-import SignIn from "~/components/SignIn";
+import AuthenticateUser from "~/components/AuthenticateUser";
+import { api } from "convex/_generated/api";
 
 const PUBLISHABLE_KEY = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY;
-const SYNC_HOST = process.env.PLASMO_PUBLIC_CLERK_SYNC_HOST
+const SYNC_HOST = process.env.PLASMO_PUBLIC_CLERK_SYNC_HOST;
 
 if (!PUBLISHABLE_KEY || !SYNC_HOST) {
   throw new Error(
-    'Please add the PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY and PLASMO_PUBLIC_CLERK_SYNC_HOST to the .env.development file',
-  )
-}
-
-function ClerkTokenSync() {
-  const { isSignedIn, getToken } = useAuth();
-
-  useEffect(() => {
-    async function syncToken() {
-      if (!isSignedIn) {
-        await chrome.storage.local.remove("clerk_token");
-        return;
-      }
-
-      const token = await getToken({
-        template: "convex",
-      });
-
-      if (token) {
-        await chrome.storage.local.set({ clerk_token: token });
-      }
-    }
-
-    void syncToken();
-  }, [getToken, isSignedIn]);
-
-  return null;
+    "Please add the PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY and PLASMO_PUBLIC_CLERK_SYNC_HOST to the .env.development file",
+  );
 }
 export default function Popup() {
-    return (
-        <ClerkProvider
-        publishableKey={PUBLISHABLE_KEY}
-        afterSignOutUrl="/popup.html"
-        syncHost={SYNC_HOST}
-      >
-        <ClerkTokenSync />
-            <ConvexProviderWithAuth
-                client={convex}
-                useAuth={useConvexClerkAuth}>
-                <div className="h-[600px] w-[800px] overflow-hidden">
-                    <Show when="signed-out">
-                        <SignIn />
-                    </Show>
+  return (
+    <ClerkProvider
+      publishableKey={PUBLISHABLE_KEY}
+      afterSignOutUrl="/popup.html"
+      syncHost={SYNC_HOST}
+    >
+      {/*<ClerkTokenSync />*/}
+      <ConvexProviderWithAuth client={convex} useAuth={useConvexClerkAuth}>
+        <div className="h-[600px] w-[800px] overflow-hidden">
+          <Show when="signed-out">
+            <AuthenticateUser />
+          </Show>
 
+          {/*<EnsureUser />*/}
           <Show when="signed-in">
             <AppStateProvider>
               <SidebarProvider defaultOpen={false}>
