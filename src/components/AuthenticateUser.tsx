@@ -8,13 +8,13 @@ import kollectLogo from "../../assets/kollect.png"
 
 function openSignInPage() {
   chrome.tabs.create({
-    url: "http://localhost:3000/sign-in",
+    url: "localhost:3000/sign-in",
   })
 }
 
 function openSignUpPage() {
   chrome.tabs.create({
-    url: "http://localhost:3000/sign-up",
+    url: "localhost:3000/sign-up",
   })
 }
 

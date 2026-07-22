@@ -6,6 +6,10 @@
   "author": "bradley",
   "scripts": {
     "dev": "plasmo dev",
+    "build:firefox": "plasmo build --target=firefox-mv3 && cd build/firefox-mv3-prod && web-ext build --overwrite-dest",
+    "dev:firefox": "plasmo dev --target=firefox-mv3",
+    "dev:firefox-ext": "cd build/firefox-mv3-dev && web-ext build --overwrite-dest",
+    "dev:all": "concurrently \"pnpm run dev\" \"pnpm run dev:firefox\"",
     "build": "plasmo build",
     "package": "plasmo package"
   },
@@ -51,6 +55,7 @@
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
     "autoprefixer": "^10.4.27",
+    "concurrently": "^10.0.3",
     "postcss": "8.4.33",
     "prettier": "3.2.4",
     "typescript": "5.3.3"

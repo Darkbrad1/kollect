@@ -4,8 +4,11 @@ import { createAuthedConvexClient } from "~/lib/convexHttp";
 
 
 import type { Manga, UserMangaPayload } from "./types";
+import { getStoredClerkToken } from "~/background/auth";
 async function getConvex() {
-  const { clerk_token } = await chrome.storage.local.get("clerk_token");
+  const { clerk_token } = await chrome.storage.session.get("clerk_token");
+  // const clerk_token = "djksalf;jkda;"
+  console.log(clerk_token)
   if (!clerk_token) throw new Error("No auth token found");
   return createAuthedConvexClient(clerk_token);
 }

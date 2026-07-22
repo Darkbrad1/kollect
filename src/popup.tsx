@@ -29,6 +29,38 @@ if (!PUBLISHABLE_KEY || !SYNC_HOST) {
     "Please add the PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY and PLASMO_PUBLIC_CLERK_SYNC_HOST to the .env.development file",
   );
 }
+function ClerkTokenSync() {
+  const { isSignedIn, getToken } = useAuth();
+
+  useEffect(() => {
+    async function syncToken() {
+      if (!isSignedIn) {
+        await chrome.storage.session.remove("clerk_token");
+        return;
+      }
+
+      const token = await getToken({
+        template: "convex",
+      });
+
+      if (token) {
+        await chrome.storage.session.set({ clerk_token: token });
+      }
+    }
+
+    void syncToken();
+
+    const interval = window.setInterval(() => {
+      void syncToken();
+    }, 5 * 60 * 1000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [getToken, isSignedIn]);
+
+  return null;
+}
 export default function Popup() {
   return (
     <ClerkProvider
@@ -36,7 +68,7 @@ export default function Popup() {
       afterSignOutUrl="/popup.html"
       syncHost={SYNC_HOST}
     >
-      {/*<ClerkTokenSync />*/}
+      <ClerkTokenSync />
       <ConvexProviderWithAuth client={convex} useAuth={useConvexClerkAuth}>
         <div className="h-[600px] w-[800px] overflow-hidden">
           <Show when="signed-out">
